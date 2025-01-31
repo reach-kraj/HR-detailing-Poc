@@ -103,6 +103,11 @@ const HeadHomepage = () => {
         <div className="company-logo">
           <h1>H&R Detailing</h1>
         </div>
+        <div className="employee-info">
+          <div><h4>Employee NO:</h4></div>
+          <div className="profile-int"><h4>EXE67677</h4></div>
+          <div><h4>Logged in as:</h4></div><div className="profile-int"><h4>Headquarters</h4></div>
+        </div>
         <button className="logout-button" onClick={() => navigate('/')}>
           Log Out
         </button>

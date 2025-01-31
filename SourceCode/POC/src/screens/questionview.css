@@ -236,7 +236,7 @@
 .detail-label {
   font-weight: 600;
   color: #1e40af;
-  min-width: 160px;
+  min-width: 16px;
   margin-right: 8px;
 }
 
@@ -290,81 +290,6 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* response css */
-
-/* Add these styles to your existing CSS file */
-
-/* .response-textarea {
-  width: 100%;
-  min-height: 150px;
-  padding: 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  font-size: 14px;
-  line-height: 1.6;
-  resize: vertical;
-  transition: all 0.2s ease;
-}
-
-.response-textarea:focus {
-  outline: none;
-  border-color: #1e40af;
-  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
-}
-
-.response-actions {
-  display: flex;
-  gap: 16px;
-  justify-content: flex-end;
-  margin-top: 16px;
-}
-
-.transfer-button,
-.respond-button {
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.transfer-button {
-  background-color: #f3f4f6;
-  border: 1px solid #d1d5db;
-  color: #4b5563;
-}
-
-.transfer-button:hover {
-  background-color: #e5e7eb;
-}
-
-.respond-button {
-  background-color: #1e40af;
-  border: none;
-  color: white;
-}
-
-.respond-button:hover {
-  background-color: #1e3a8a;
-}
-
-.rfi-input {
-  width: 100%;
-  margin-top: 8px;
-  padding: 8px 12px;
-  border: 1px solid #e5e7eb;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.rfi-input:focus {
-  outline: none;
-  border-color: #1e40af;
-  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
-} */
-
-/* Add these styles to your existing CSS file */
 
 .response-textarea {
   width: 100%;
