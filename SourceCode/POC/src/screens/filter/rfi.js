@@ -77,7 +77,7 @@ const RFI = () => {
           <h2>Search by HR RFI ({filteredQuestions.length})</h2>
           <div className="header-controls">
             <button className="filter-button" onClick={handleSort}>
-              <span>Sort {sortOrder === 'asc' ? '↓' : '↑'}</span>
+              <span>Sort {sortOrder === 'asc' }</span>
               <ArrowUpDown className="h-4 w-4" />
             </button>
             <div className="search-container">
