@@ -12,7 +12,7 @@ const questionsData = [
       HR_RFI: " ",
       DateSent: "2024-04-08",
       Resp_by: " ",
-      Response: " ",
+      Response: "Not yet Responded",
       Response_Date: "",
       Work_Done_By: " ",
       Additional_Notes: "Sent email to Sonny 18.04.24 (9:30am)"
@@ -66,7 +66,7 @@ const questionsData = [
         HR_RFI: " ",
         DateSent: "2024-07-10",
         Resp_by: " ",
-        Response: " ",
+        Response:"Not yet Responded",
         Response_Date: " ",
         Work_Done_By: " ",
         Additional_Notes: "Sent email to Sonny 18.04.24 (11:30am)"
@@ -120,7 +120,7 @@ const questionsData = [
         HR_RFI: " ",
         DateSent: "2024-04-19",
         Resp_by: " ",
-        Response: " ",
+        Response: "Not yet Responded",
         Response_Date: " ",
         Work_Done_By: " ",
         Additional_Notes: "Sent email to Sonny 18.04.24 (11:30am)"
