@@ -1,4 +1,4 @@
-// data/userdata.js
+//userdata.js
 const userData = [
   {
     username: "SA0101",

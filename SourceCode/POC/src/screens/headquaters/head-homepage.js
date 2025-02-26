@@ -1,11 +1,9 @@
-
-
 import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import questionsData from "../data/template";
 import { branchData, jobData } from "../data/userdata"; // Import userdata
+import { useJobQuestions } from "../data/hooks/useJobQuestions"; // Import the custom hook
 
 // Register ChartJS components
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -19,6 +17,9 @@ const HeadHomepage = () => {
     branchName: "",
   });
   const [jobInfo, setJobInfo] = useState({ jobCode: "", jobName: "" });
+
+  // Use the custom hook to fetch job-specific questions
+  const { questions, loading, error } = useJobQuestions();
 
   // Filters array remains unchanged
   const filters = [
@@ -91,7 +92,7 @@ const HeadHomepage = () => {
       setJobInfo({ jobCode: "N/A", jobName: "N/A" });
     }
   }, [navigate]);
-  
+
   // Function to highlight matched text
   const highlightMatch = useCallback((text, query) => {
     if (!query.trim()) return text;
@@ -114,9 +115,14 @@ const HeadHomepage = () => {
     filter.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Calculate counts for open and closed questions
-  const openCount = questionsData.filter((q) => q.status === "open").length;
-  const closedCount = questionsData.filter((q) => q.status === "closed").length;
+  // Handle loading and error states
+  if (loading) return <div>Loading data...</div>;
+  if (error) return <div>{error}</div>;
+  if (!currentUser) return null; // Prevent rendering until user is loaded
+
+  // Calculate counts for open and closed questions using dynamic questions data
+  const openCount = questions.filter((q) => q.status === "open").length;
+  const closedCount = questions.filter((q) => q.status === "closed").length;
 
   // Data for the first pie chart (Open vs Closed)
   const pieChartData = {
@@ -131,11 +137,9 @@ const HeadHomepage = () => {
   };
 
   // Calculate counts for stages: Approval, Review, Fabrication
-  const approvalCount = questionsData.filter(
-    (q) => q.Stage === "Approval"
-  ).length;
-  const reviewCount = questionsData.filter((q) => q.Stage === "Review").length;
-  const fabricationCount = questionsData.filter(
+  const approvalCount = questions.filter((q) => q.Stage === "Approval").length;
+  const reviewCount = questions.filter((q) => q.Stage === "Review").length;
+  const fabricationCount = questions.filter(
     (q) => q.Stage === "Fabrication"
   ).length;
 
@@ -161,8 +165,6 @@ const HeadHomepage = () => {
       },
     },
   };
-
-  if (!currentUser) return null; // Prevent rendering until user is loaded
 
   return (
     <div className="home-container">
@@ -226,6 +228,7 @@ const HeadHomepage = () => {
             View All
           </button>
         </div>
+
         {/* New Summary Block */}
         <div className="summary-block">
           <h3 className="summary-title">Clarity List Summary</h3>

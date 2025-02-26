@@ -1,88 +1,82 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowUpDown } from 'lucide-react';
-import './filter.css';
-import questionsData from '../data/template';
+
+
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowUpDown } from "lucide-react";
+import "./filter.css";
+import { useJobQuestions } from "../data/hooks/useJobQuestions"; // Import the custom hook
 
 const Seq = () => {
   const navigate = useNavigate();
-  const [sortOrder, setSortOrder] = useState('asc');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [questions, setQuestions] = useState([]);
-
-  useEffect(() => {
-    try {
-      const validatedData = questionsData.map((item, index) => {
-        if (!item.clNo || !item.q || !item.date || !item.status || !item.Seq_area_zone) {
-          console.error(`Missing required fields in question at index ${index}:`, item);
-          return null;
-        }
-
-        return {
-          clNo: item.clNo.trim(),
-          q: item.q.trim(),
-          date: item.date.trim(),
-          status: item.status.toLowerCase().trim(),
-          Seq_area_zone: item.Seq_area_zone.trim()
-        };
-      }).filter(item => item !== null);
-
-      setQuestions(validatedData);
-    } catch (error) {
-      console.error('Error processing questions data:', error);
-      setQuestions([]);
-    }
-  }, []);
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [searchQuery, setSearchQuery] = useState("");
+  const { questions, loading, error } = useJobQuestions(); // Use the hook
 
   const handleQuestionClick = (clNo) => {
     navigate(`/question/${clNo}`);
   };
 
-  const handleSort = () => {
-    setSortOrder(prevOrder => (prevOrder === 'asc' ? 'desc' : 'asc'));
-
-    setQuestions(prevQuestions => {
-      try {
-        const sorted = [...prevQuestions].sort((a, b) => {
-          return sortOrder === 'asc' 
-            ? a.Seq_area_zone.localeCompare(b.Seq_area_zone) 
-            : b.Seq_area_zone.localeCompare(a.Seq_area_zone);
-        });
-        return sorted;
-      } catch (error) {
-        console.error('Error sorting questions:', error);
-        return prevQuestions;
-      }
-    });
+  // Sorting function by Seq_area_zone
+  const getSortedQuestions = (questionsToSort) => {
+    try {
+      const sorted = [...questionsToSort].sort((a, b) => {
+        return sortOrder === "asc"
+          ? a.Seq_area_zone.localeCompare(b.Seq_area_zone)
+          : b.Seq_area_zone.localeCompare(a.Seq_area_zone);
+      });
+      return sorted;
+    } catch (error) {
+      console.error("Error sorting questions:", error);
+      return questionsToSort;
+    }
   };
 
+  const handleSort = () => {
+    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+  };
+
+  // Filter questions by Seq_area_zone and search query
   const getFilteredQuestions = () => {
     try {
-      if (!searchQuery.trim()) return questions;
+      // Filter out questions missing required fields
+      const validQuestions = questions.filter(
+        (item) =>
+          item.clNo && item.q && item.date && item.status && item.Seq_area_zone
+      );
+
+      if (!searchQuery.trim()) return getSortedQuestions(validQuestions);
 
       const query = searchQuery.toLowerCase().trim();
-      return questions.filter(question =>
+      const filtered = validQuestions.filter((question) =>
         question.Seq_area_zone.toLowerCase().includes(query)
       );
+      return getSortedQuestions(filtered);
     } catch (error) {
-      console.error('Error filtering questions:', error);
+      console.error("Error filtering questions:", error);
       return questions;
     }
   };
 
   const filteredQuestions = getFilteredQuestions();
 
+  if (loading) return <div>Loading questions...</div>;
+  if (error) return <div>{error}</div>;
+
   return (
     <div className="home-container">
       <div className="home-header">
-      <div className="company-logo">
-        <h1>H&R Detailing</h1>
+        <div className="company-logo">
+          <h1>H&R Detailing</h1>
         </div>
-        <button className="logout-button" onClick={() => navigate('/')}>Log Out</button>
+        <button className="logout-button" onClick={() => navigate("/")}>
+          Log Out
+        </button>
       </div>
 
       <div className="back-button-div">
-        <button className="back-button" onClick={() => navigate(-1)}>Back</button>
+        <button className="back-button" onClick={() => navigate(-1)}>
+          Back
+        </button>
       </div>
 
       <div className="home-content-box">
@@ -90,7 +84,7 @@ const Seq = () => {
           <h2>Search by Seq Area Zone ({filteredQuestions.length})</h2>
           <div className="header-controls">
             <button className="filter-button" onClick={handleSort}>
-              <span>Sort {sortOrder === 'asc' }</span>
+              <span>Sort {sortOrder === "asc" ? "Asc" : "Desc"}</span>
               <ArrowUpDown className="h-4 w-4" />
             </button>
             <div className="search-container">
@@ -119,13 +113,21 @@ const Seq = () => {
                 </div>
                 <div className="question-meta">
                   <div className="cl-number">{question.clNo}</div>
-                  <div className={`status-badge ${question.status}`}>{question.status}</div>
-                  <div className="stage-badge highlight">{question.Seq_area_zone}</div>
+                  <div className={`status-badge ${question.status}`}>
+                    {question.status}
+                  </div>
+                  <div className="stage-badge highlight">
+                    {question.Seq_area_zone}
+                  </div>
                 </div>
               </div>
             ))
           ) : (
-            <p className="no-results">{searchQuery ? `No results found for "${searchQuery}"` : 'No questions available'}</p>
+            <p className="no-results">
+              {searchQuery
+                ? `No results found for "${searchQuery}"`
+                : "No questions available"}
+            </p>
           )}
         </div>
       </div>

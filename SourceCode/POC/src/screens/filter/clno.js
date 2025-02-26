@@ -1,83 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowUpDown } from 'lucide-react';
-import './filter.css';
-import questionsData from '../data/template';
+
+// filter/Clno.js
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowUpDown } from "lucide-react";
+import "./filter.css";
+import { useJobQuestions } from "../data/hooks/useJobQuestions";
 
 const Clno = () => {
   const navigate = useNavigate();
-  const [sortOrder, setSortOrder] = useState('asc');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [questions, setQuestions] = useState([]);
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [searchQuery, setSearchQuery] = useState("");
+  const { questions, loading, error } = useJobQuestions();
 
-  // Initialize questions with validation
-  useEffect(() => {
-    try {
-      const validatedData = questionsData.map((item, index) => {
-        // Validate required fields exist
-        if (!item.clNo || !item.q || !item.date || !item.status) {
-          console.error(`Missing required fields in question at index ${index}:`, item);
-          return null;
-        }
-        
-        return {
-          clNo: item.clNo.trim(),
-          q: item.q.trim(),
-          date: item.date.trim(),
-          status: item.status.toLowerCase().trim()
-        };
-      }).filter(item => item !== null); // Remove any invalid entries
-
-      setQuestions(validatedData);
-    } catch (error) {
-      console.error('Error processing questions data:', error);
-      setQuestions([]);
-    }
-  }, []);
   const handleQuestionClick = (clNo) => {
     navigate(`/question/${clNo}`);
   };
 
-  // Improved sorting function with error handling
-  const handleSort = () => {
-    setSortOrder(prevOrder => (prevOrder === 'asc' ? 'desc' : 'asc'));
-
-    setQuestions(prevQuestions => {
-      try {
-        const sorted = [...prevQuestions].sort((a, b) => {
-          const numA = parseInt(a.clNo.replace(/[^0-9]/g, '')) || 0;
-          const numB = parseInt(b.clNo.replace(/[^0-9]/g, '')) || 0;
-          return sortOrder === 'asc' ? numB - numA : numA - numB;
-        });
-        return sorted;
-      } catch (error) {
-        console.error('Error sorting questions:', error);
-        return prevQuestions;
-      }
-    });
-  };
-
-  // Improved search function with debouncing
-  const getFilteredQuestions = () => {
+  // Sorting function that returns a sorted array
+  const getSortedQuestions = (questionsToSort) => {
     try {
-      if (!searchQuery.trim()) return questions;
-
-      const query = searchQuery.toLowerCase().trim();
-      return questions.filter(question => {
-        return (
-          (question.clNo && question.clNo.toLowerCase().includes(query)) 
-          // ||(question.q && question.q.toLowerCase().includes(query)) ||
-          // (question.date && question.date.toLowerCase().includes(query)) ||
-          // (question.status && question.status.toLowerCase().includes(query))
-        );
+      const sorted = [...questionsToSort].sort((a, b) => {
+        const numA = parseInt(a.clNo.replace(/[^0-9]/g, "")) || 0;
+        const numB = parseInt(b.clNo.replace(/[^0-9]/g, "")) || 0;
+        return sortOrder === "asc" ? numA - numB : numB - numA; // Corrected logic for asc/desc
       });
+      return sorted;
     } catch (error) {
-      console.error('Error filtering questions:', error);
-      return questions;
+      console.error("Error sorting questions:", error);
+      return questionsToSort; // Return original array on error
     }
   };
 
-  const filteredQuestions = getFilteredQuestions();
+  const handleSort = () => {
+    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+  };
+
+  const getFilteredQuestions = (questionsToFilter) => {
+    try {
+      if (!searchQuery.trim()) return questionsToFilter;
+      const query = searchQuery.toLowerCase().trim();
+      return questionsToFilter.filter((question) =>
+        question.clNo.toLowerCase().includes(query)
+      );
+    } catch (error) {
+      console.error("Error filtering questions:", error);
+      return questionsToFilter;
+    }
+  };
+
+  // Apply sorting and filtering
+  const sortedQuestions = getSortedQuestions(questions);
+  const filteredQuestions = getFilteredQuestions(sortedQuestions);
+
+  if (loading) return <div>Loading questions...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="home-container">
@@ -85,7 +61,7 @@ const Clno = () => {
         <div className="company-logo">
           <h1>H&R Detailing</h1>
         </div>
-        <button className="logout-button" onClick={() => navigate('/')}>
+        <button className="logout-button" onClick={() => navigate("/")}>
           Log Out
         </button>
       </div>
@@ -101,7 +77,7 @@ const Clno = () => {
           <h2>Search by CL no ({filteredQuestions.length})</h2>
           <div className="header-controls">
             <button className="filter-button" onClick={handleSort}>
-              <span>Sort {sortOrder === 'asc'}</span>
+              <span>Sort {sortOrder === "asc" ? "Asc" : "Desc"}</span>
               <ArrowUpDown className="h-4 w-4" />
             </button>
             <div className="search-container">
@@ -117,31 +93,33 @@ const Clno = () => {
         </div>
 
         <div className="questions-list">
-      {filteredQuestions.length > 0 ? (
-        filteredQuestions.map((question, index) => (
-          <div
-            key={`${question.clNo}-${index}`}
-            className="question-card"
-            onClick={() => handleQuestionClick(question.clNo)}
-          >
-            <div className="question-date">{question.date}</div>
-            <div className="question-content">
-              <p>{question.q}</p>
-            </div>
-            <div className="question-meta">
-              <div className="stage-badge highlight">{question.clNo}</div>
-              <div className={`status-badge ${question.status}`}>
-                {question.status}
+          {filteredQuestions.length > 0 ? (
+            filteredQuestions.map((question, index) => (
+              <div
+                key={`${question.clNo}-${index}`}
+                className="question-card"
+                onClick={() => handleQuestionClick(question.clNo)}
+              >
+                <div className="question-date">{question.date}</div>
+                <div className="question-content">
+                  <p>{question.q}</p>
+                </div>
+                <div className="question-meta">
+                  <div className="stage-badge highlight">{question.clNo}</div>
+                  <div className={`status-badge ${question.status}`}>
+                    {question.status}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        ))
-      ) : (
-        <p className="no-results">
-          {searchQuery ? `No results found for "${searchQuery}"` : 'No questions available'}
-        </p>
-      )}
-    </div>
+            ))
+          ) : (
+            <p className="no-results">
+              {searchQuery
+                ? `No results found for "${searchQuery}"`
+                : "No questions available"}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,75 +1,82 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowUpDown } from 'lucide-react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import './filter.css';
-import questionsData from '../data/template';
+
+
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowUpDown } from "lucide-react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "./filter.css";
+import { useJobQuestions } from "../data/hooks/useJobQuestions"; // Import the custom hook
 
 const ResDate = () => {
   const navigate = useNavigate();
-  const [sortOrder, setSortOrder] = useState('asc');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [questions, setQuestions] = useState([]);
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-
-  useEffect(() => {
-    try {
-      const validatedData = questionsData
-        .filter(item => item.Response_Date && item.Response_Date.trim() !== '')
-        .map(item => ({
-          clNo: item.clNo.trim(),
-          q: item.q.trim(),
-          date: item.date.trim(),
-          status: item.status.toLowerCase().trim(),
-          responseDate: item.Response_Date.trim(),
-        }));
-      setQuestions(validatedData);
-    } catch (error) {
-      console.error('Error processing questions data:', error);
-      setQuestions([]);
-    }
-  }, []);
+  const { questions, loading, error } = useJobQuestions(); // Use the hook
 
   const handleQuestionClick = (clNo) => {
     navigate(`/question/${clNo}`);
   };
 
-  const handleSort = () => {
-    const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
-    setSortOrder(newSortOrder);
-    setQuestions(prevQuestions => {
-      return [...prevQuestions].sort((a, b) => {
-        const numA = parseInt(a.clNo.replace(/[^0-9]/g, ''), 10) || 0;
-        const numB = parseInt(b.clNo.replace(/[^0-9]/g, ''), 10) || 0;
-        return newSortOrder === 'asc' ? numA - numB : numB - numA;
+  // Sorting function
+  const getSortedQuestions = (questionsToSort) => {
+    try {
+      const sorted = [...questionsToSort].sort((a, b) => {
+        const numA = parseInt(a.clNo.replace(/[^0-9]/g, ""), 10) || 0;
+        const numB = parseInt(b.clNo.replace(/[^0-9]/g, ""), 10) || 0;
+        return sortOrder === "asc" ? numA - numB : numB - numA;
       });
-    });
+      return sorted;
+    } catch (error) {
+      console.error("Error sorting questions:", error);
+      return questionsToSort;
+    }
   };
 
+  const handleSort = () => {
+    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+  };
+
+  // Filter questions by Response_Date and search query
   const getFilteredQuestions = () => {
-    let filtered = questions;
-    if (startDate && endDate) {
-      const start = new Date(startDate).setHours(0, 0, 0, 0);
-      const end = new Date(endDate).setHours(23, 59, 59, 999);
-      filtered = filtered.filter(question => {
-        const questionDate = new Date(question.responseDate).getTime();
-        return questionDate >= start && questionDate <= end;
-      });
+    try {
+      let filtered = questions.filter(
+        (item) => item.Response_Date && item.Response_Date.trim() !== ""
+      ); // Ensure Response_Date is not empty
+
+      if (startDate && endDate) {
+        const start = new Date(startDate).setHours(0, 0, 0, 0);
+        const end = new Date(endDate).setHours(23, 59, 59, 999);
+
+        filtered = filtered.filter((question) => {
+          const questionDate = new Date(question.Response_Date).getTime();
+          return questionDate >= start && questionDate <= end;
+        });
+      }
+
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase().trim();
+        filtered = filtered.filter(
+          (question) =>
+            question.clNo.toLowerCase().includes(query) ||
+            question.q.toLowerCase().includes(query) ||
+            question.Response_Date.toLowerCase().includes(query)
+        );
+      }
+
+      return getSortedQuestions(filtered);
+    } catch (error) {
+      console.error("Error filtering questions:", error);
+      return questions;
     }
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim();
-      filtered = filtered.filter(question => 
-        question.clNo.toLowerCase().includes(query) ||
-        question.q.toLowerCase().includes(query) ||
-        question.responseDate.toLowerCase().includes(query)
-      );
-    }
-    return filtered;
   };
 
   const filteredQuestions = getFilteredQuestions();
+
+  if (loading) return <div>Loading questions...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="home-container">
@@ -77,39 +84,49 @@ const ResDate = () => {
         <div className="company-logo">
           <h1>H&R Detailing</h1>
         </div>
-        <button className="logout-button" onClick={() => navigate('/')}>Log Out</button>
+        <button className="logout-button" onClick={() => navigate("/")}>
+          Log Out
+        </button>
       </div>
 
       <div className="back-button-div">
-        <button className="back-button" onClick={() => navigate(-1)}>Back</button>
+        <button className="back-button" onClick={() => navigate(-1)}>
+          Back
+        </button>
       </div>
 
       <div className="home-content-box">
         <div className="questions-header">
           <h2>Response Date ({filteredQuestions.length})</h2>
           <div className="header-controls">
-              <DatePicker
-                selected={startDate}
-                onChange={date => setStartDate(date)}
-                selectsStart
-                startDate={startDate}
-                endDate={endDate}
-                placeholderText="Start Date"
-                className="date-picker"
-              />
-              <DatePicker
-                selected={endDate}
-                onChange={date => setEndDate(date)}
-                selectsEnd
-                startDate={startDate}
-                endDate={endDate}
-                minDate={startDate}
-                maxDate={startDate ? new Date(new Date(startDate).getTime() + (30 * 24 * 60 * 60 * 1000)) : null}
-                placeholderText="End Date"
-                className="date-picker"
-              />
+            <DatePicker
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+              placeholderText="Start Date"
+              className="date-picker"
+            />
+            <DatePicker
+              selected={endDate}
+              onChange={(date) => setEndDate(date)}
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              minDate={startDate}
+              maxDate={
+                startDate
+                  ? new Date(
+                      new Date(startDate).getTime() + 30 * 24 * 60 * 60 * 1000
+                    )
+                  : null
+              }
+              placeholderText="End Date"
+              className="date-picker"
+            />
             <button className="filter-button" onClick={handleSort}>
-              <span>Sort {sortOrder === 'asc' }</span>
+              <span>Sort {sortOrder === "asc" ? "Asc" : "Desc"}</span>
               <ArrowUpDown className="h-4 w-4" />
             </button>
             <div className="search-container">
@@ -138,14 +155,20 @@ const ResDate = () => {
                 </div>
                 <div className="question-meta">
                   <div className="cl-number">{question.clNo}</div>
-                  <div className={`status-badge ${question.status}`}>{question.status}</div>
-                  <div className="date-sent-badge highlight">{question.responseDate}</div>
+                  <div className={`status-badge ${question.status}`}>
+                    {question.status}
+                  </div>
+                  <div className="date-sent-badge highlight">
+                    {question.Response_Date}
+                  </div>
                 </div>
               </div>
             ))
           ) : (
             <p className="no-results">
-              {searchQuery ? `No results found for "${searchQuery}"` : 'No records available'}
+              {searchQuery
+                ? `No results found for "${searchQuery}"`
+                : "No records available"}
             </p>
           )}
         </div>
