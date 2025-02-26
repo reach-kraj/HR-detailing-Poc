@@ -1,39 +1,39 @@
-// AddQuestion.js
-import React, { useState } from 'react';
-import { useNavigate,Link } from 'react-router-dom';
+
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 const AddQuestion = () => {
   const navigate = useNavigate();
-  const currentDate = new Date().toLocaleDateString('en-GB');
-  
+  const currentDate = new Date().toLocaleDateString("en-GB");
+
   const [formData, setFormData] = useState({
-    clNo: '',
-    hrRfiNumber: '',
-    hrdDetailerInitials: '',
-    designReference: '',
-    sequence: '',
-    zone: '',
-    area: '',
-    stage: '',
-    hrSketchNumber: '',
-    additionalNotes: '',
-    question: '',
-    status: 'Open'
+    clNo: "CL008", // Hardcoded to CL008
+    hrRfiNumber: "",
+    hrdDetailerInitials: "",
+    designReference: "",
+    sequence: "",
+    zone: "",
+    area: "",
+    stage: "",
+    hrSketchNumber: "",
+    additionalNotes: "",
+    question: "",
+    status: "Open",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Add your submission logic here
-    console.log(formData);
-    navigate('/homepage');
+    console.log(formData); // clNo will be "CL008"
+    navigate("/homepage");
   };
 
   return (
@@ -43,7 +43,7 @@ const AddQuestion = () => {
         <div className="company-logo">
           <h1>H&R Detailing</h1>
         </div>
-        <button className="logout-button" onClick={() => navigate('/')}>
+        <button className="logout-button" onClick={() => navigate("/")}>
           Log Out
         </button>
       </div>
@@ -56,17 +56,10 @@ const AddQuestion = () => {
           </div>
 
           <div className="form-grid">
+            {/* Display CL No as static text instead of input */}
             <div className="form-group">
               <label htmlFor="clNo">CL No:</label>
-              <input
-                type="text"
-                id="clNo"
-                name="clNo"
-                value={formData.clNo}
-                onChange={handleChange}
-                className="input-field"
-                required
-              />
+              <div className="input-field static-text">{formData.clNo}</div>
             </div>
 
             <div className="form-group">
@@ -93,7 +86,9 @@ const AddQuestion = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="hrdDetailerInitials">HRD Detailer Initials:</label>
+              <label htmlFor="hrdDetailerInitials">
+                HRD Detailer Initials:
+              </label>
               <input
                 type="text"
                 id="hrdDetailerInitials"
@@ -182,6 +177,18 @@ const AddQuestion = () => {
                 required
               />
             </div>
+            <div className="form-group">
+              <label htmlFor="hrSketchNumber">Work Done By:</label>
+              <input
+                type="text"
+                id="hrSketchNumber"
+                name="hrSketchNumber"
+                value={formData.hrSketchNumber}
+                onChange={handleChange}
+                className="input-field"
+                required
+              />
+            </div>
           </div>
 
           <div className="form-group full-width">
@@ -202,13 +209,14 @@ const AddQuestion = () => {
               Send
             </button>
           </div>
-         
         </form>
       </div>
       <div className="back-button-div">
-  <Link to="/brhomepage" className="back-button"> ⬅︎ Back </Link>
-</div>
-
+        <Link to="/brhomepage" className="back-button">
+          {" "}
+          ⬅︎ Back{" "}
+        </Link>
+      </div>
     </div>
   );
 };

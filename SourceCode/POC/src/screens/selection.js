@@ -38,16 +38,35 @@ const Selection = () => {
   }, [navigate]);
 
   // Handle branch selection for Super Admin
+  // In selection.js
   const handleBranchClick = (branch) => {
     setSelectedBranch(branch);
     setJobs(branch.jobs.map((jobNo) => jobData.find((j) => j.jobNo === jobNo)));
+    // Store selected branch
+    sessionStorage.setItem(
+      "selectedBranch",
+      JSON.stringify({
+        branchCode: branch.branchCode,
+        branchName: branch.branchName,
+      })
+    );
   };
 
   // Handle job selection and navigation
+  // In selection.js, update the handleJobClick function
   const handleJobClick = (job) => {
+    // Store the selected job in sessionStorage
+    sessionStorage.setItem(
+      "selectedJob",
+      JSON.stringify({
+        jobNo: job.jobNo,
+        jobName: job.jobName,
+      })
+    );
+
     if (currentUser.role === "SUPER_ADMIN") {
       navigate("/hqhomepage");
-    } else {
+    } else{
       navigate("/brhomepage");
     }
   };
@@ -134,7 +153,7 @@ const Selection = () => {
                   <p>{branch.branchName}</p>
                 </div>
                 <div className="question-meta">
-                  <div className="status-badge open">Select</div>
+                  <div className="status-badge open">Open</div>
                 </div>
               </div>
             ))}
@@ -153,7 +172,7 @@ const Selection = () => {
                   <p>{job.jobName}</p>
                 </div>
                 <div className="question-meta">
-                  <div className="status-badge open">Select</div>
+                  <div className="status-badge open">Open</div>
                 </div>
               </div>
             ))}

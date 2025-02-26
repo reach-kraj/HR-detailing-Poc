@@ -181,16 +181,7 @@ const ResponseView = () => {
             />
 
             <div className="response-details">
-              <div className="input-group">
-                <label>Work Done By:</label>
-                <input
-                  type="text"
-                  className="detail-input"
-                  value={workDoneBy}
-                  onChange={(e) => setWorkDoneBy(e.target.value)}
-                  placeholder="Enter name"
-                />
-              </div>
+            
 
               <div className="input-group">
                 <label>Respond By:</label>

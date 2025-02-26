@@ -6,16 +6,15 @@ const RoleSelectionPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Find user in userData
     const user = userData.find((user) => user.username === username);
 
     if (user && user.password === password) {
-      // Set user data in session storage for access across components
       sessionStorage.setItem(
         "currentUser",
         JSON.stringify({
@@ -27,13 +26,53 @@ const RoleSelectionPage = () => {
           jobs: user.jobs || null,
         })
       );
-
-      // Navigate to selection page for all users
       navigate("/selection");
     } else {
       setError("Invalid username or password");
     }
   };
+
+  const availableUsers = [
+    { role: "Super Admin", username: "SA0101" },
+    { role: "Branch Admin (Chennai)", username: "BA0201" },
+    { role: "Branch Admin (Mumbai)", username: "BA0202" },
+    { role: "Branch Admin (Delhi)", username: "BA0203" },
+    { role: "Branch Admin (Bangalore)", username: "BA0204" },
+    { role: "Branch User (Chennai)", username: "BU0301" },
+    { role: "Branch User (Chennai)", username: "BU0302" },
+    // { role: "Password for all users", username: "password123" },
+  ];
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prev) => !prev);
+  };
+
+  // Updated handleUsernameChange to auto-fill password
+  const handleUsernameChange = (e) => {
+    const newUsername = e.target.value;
+    setUsername(newUsername);
+    // Auto-fill password when a valid username is typed
+    const isValidUsername = availableUsers.some(
+      (user) => user.username === newUsername && user.username !== "password123"
+    );
+    if (isValidUsername) {
+      setPassword("password123");
+    } else {
+      setPassword(""); // Clear password if username is invalid
+    }
+  };
+
+  // Updated handleUsernameClick to auto-fill both username and password
+  const handleUsernameClick = (selectedUsername) => {
+    if (selectedUsername !== "password123") {
+      setUsername(selectedUsername);
+      setPassword("password123"); // Auto-fill password when username is clicked
+    }
+    setIsDropdownOpen(false);
+  };
+
+  // Remove handlePasswordClick since it's no longer needed
+  // Password will auto-fill with username
 
   return (
     <div className="login-container">
@@ -53,7 +92,7 @@ const RoleSelectionPage = () => {
                 id="username"
                 className="input-field"
                 value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                onChange={handleUsernameChange} // Updated to use new handler
                 required
                 placeholder="Enter your username"
               />
@@ -65,7 +104,7 @@ const RoleSelectionPage = () => {
                 id="password"
                 className="input-field"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)} // Still allow manual changes if needed
                 required
                 placeholder="Enter your password"
               />
@@ -74,37 +113,27 @@ const RoleSelectionPage = () => {
               Login
             </button>
           </form>
+        </div>
 
-          <div className="divider">
-            <h5>Available Users</h5>
-          </div>
-
-          <div className="available-users">
-            <p>
-              <strong>Super Admin:</strong> SA0101
-            </p>
-            <p>
-              <strong>Branch Admin (Chennai):</strong> BA0201
-            </p>
-            <p>
-              <strong>Branch Admin (Mumbai):</strong> BA0202
-            </p>
-            <p>
-              <strong>Branch Admin (Delhi):</strong> BA0203
-            </p>
-            <p>
-              <strong>Branch Admin (Bangalore):</strong> BA0204
-            </p>
-            <p>
-              <strong>Branch User (Jobs J001, J002):</strong> BU0301
-            </p>
-            <p>
-              <strong>Branch User (Jobs J003, J004):</strong> BU0302
-            </p>
-            <p>
-              <strong>Password for all users:</strong> password123
-            </p>
-          </div>
+        <div className="user-dropdown-container">
+          <button className="user-dropdown-button" onClick={toggleDropdown}>
+            Show Available Users
+          </button>
+          {isDropdownOpen && (
+            <div className="user-dropdown-content">
+              {availableUsers.map((user, index) => (
+                <div key={index} className="user-item">
+                  <span
+                    className="user-username"
+                    onClick={() => handleUsernameClick(user.username)}
+                  >
+                    {user.username}
+                  </span>
+                  <span className="user-role">{user.role}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
