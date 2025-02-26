@@ -1,13 +1,30 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useJobQuestions } from "../data/hooks/useJobQuestions"; // Import the hook
 
 const AddQuestion = () => {
   const navigate = useNavigate();
+  const { questions, loading, error } = useJobQuestions(); // Fetch questions data
   const currentDate = new Date().toLocaleDateString("en-GB");
 
+  // Function to generate the next clNo based on fetched questions
+  const getNextClNo = (questions) => {
+    if (!questions || questions.length === 0) return "CL001"; // Default if no questions exist
+
+    // Extract numeric part from clNo (e.g., "005" from "CL005")
+    const clNumbers = questions.map((q) =>
+      parseInt(q.clNo.replace("CL", ""), 10)
+    );
+    const maxClNo = Math.max(...clNumbers); // Find the highest number
+    const nextClNo = maxClNo + 1; // Increment it
+
+    // Format as "CLXXX" with leading zeros (e.g., "CL006")
+    return `CL${String(nextClNo).padStart(3, "0")}`;
+  };
+
   const [formData, setFormData] = useState({
-    clNo: "CL008", // Hardcoded to CL008
+    clNo: "", // Will be set dynamically after data loads
     hrRfiNumber: "",
     hrdDetailerInitials: "",
     designReference: "",
@@ -21,6 +38,22 @@ const AddQuestion = () => {
     status: "Open",
   });
 
+  // Set the initial clNo once questions data is fetched
+  useEffect(() => {
+    if (!loading && !error && questions.length > 0) {
+      const nextClNo = getNextClNo(questions);
+      setFormData((prevState) => ({
+        ...prevState,
+        clNo: nextClNo,
+      }));
+    } else if (!loading && (!questions || questions.length === 0)) {
+      setFormData((prevState) => ({
+        ...prevState,
+        clNo: "CL001", // Fallback if no questions exist
+      }));
+    }
+  }, [loading, error, questions]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -31,10 +64,12 @@ const AddQuestion = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add your submission logic here
-    console.log(formData); // clNo will be "CL008"
-    navigate("/homepage");
+    console.log(formData); // Log the form data with dynamic clNo
+    navigate("/brhomepage"); // Adjust to your route
   };
+
+  if (loading) return <div>Loading questions...</div>;
+  if (error) return <div>Error loading questions: {error}</div>;
 
   return (
     <div className="home-container">
@@ -56,7 +91,7 @@ const AddQuestion = () => {
           </div>
 
           <div className="form-grid">
-            {/* Display CL No as static text instead of input */}
+            {/* Display CL No as static text */}
             <div className="form-group">
               <label htmlFor="clNo">CL No:</label>
               <div className="input-field static-text">{formData.clNo}</div>
@@ -177,13 +212,14 @@ const AddQuestion = () => {
                 required
               />
             </div>
+
             <div className="form-group">
-              <label htmlFor="hrSketchNumber">Work Done By:</label>
+              <label htmlFor="workDoneBy">Work Done By:</label>
               <input
                 type="text"
-                id="hrSketchNumber"
-                name="hrSketchNumber"
-                value={formData.hrSketchNumber}
+                id="workDoneBy"
+                name="workDoneBy" // Fixed name to match field
+                value={formData.workDoneBy || ""} // Use a unique field name
                 onChange={handleChange}
                 className="input-field"
                 required
@@ -213,8 +249,7 @@ const AddQuestion = () => {
       </div>
       <div className="back-button-div">
         <Link to="/brhomepage" className="back-button">
-          {" "}
-          ⬅︎ Back{" "}
+          {" ⬅︎ Back "}
         </Link>
       </div>
     </div>
