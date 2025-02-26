@@ -12,6 +12,8 @@ import RoleSelectionPage from "./screens/mainpage";
 import QuestionView from "./screens/questionview";
 import ResponseView from "./screens/responseview";
 import Selection from "./screens/selection";
+import NewBranch from "./screens/newBranch";
+import NewJob from "./screens/newJob";
 // Filter Imports
 import Clno from "./screens/filter/clno";
 import Stage from "./screens/filter/stage";
@@ -61,6 +63,8 @@ function App() {
             <Route path="/filter/Response" element={<Response />} />
             <Route path="/filter/datesent" element={<DateSent />} />
             <Route path="/filter/resdate" element={<ResDate />} />
+            <Route path="/new-branch" element={<NewBranch />} />
+            <Route path="/new-job" element={<NewJob />} />
           </Routes>
         </div>
         <Watermark />
