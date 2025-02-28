@@ -1,41 +1,36 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import questionsData from './data/template';
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import questionsData from "./data/template";
 
 const ResponseView = () => {
   const { clNo } = useParams();
   const navigate = useNavigate();
-  const [response, setResponse] = useState('');
-  const [workDoneBy, setWorkDoneBy] = useState('');
-  const [respondBy, setRespondBy] = useState('');
-  const [error, setError] = useState('');
+  const [response, setResponse] = useState("");
+  const [respondBy, setRespondBy] = useState("");
+  const [error, setError] = useState("");
   const [showRFIModal, setShowRFIModal] = useState(false);
-  const [rfiNumber, setRFINumber] = useState('');
-  
+  const [rfiNumber, setRFINumber] = useState("");
+
   // Find the question data based on clNo
-  const questionData = questionsData.find(q => q.clNo === clNo);
+  const questionData = questionsData.find((q) => q.clNo === clNo);
 
   const handleRespond = () => {
     if (!response.trim()) {
-      setError('Response cannot be empty');
+      setError("Response cannot be empty");
       return;
     }
-    if (!workDoneBy.trim()) {
-      setError('Work Done By cannot be empty');
-      return;
-    }
+
     // Handle response submission logic here
-    setError('');
-    console.log('Response submitted:', {
+    setError("");
+    console.log("Response submitted:", {
       response,
-      workDoneBy,
-      respondBy
+      respondBy,
     });
-    
+
     // Show success toast
-    toast.success('Response submitted successfully!', {
+    toast.success("Response submitted successfully!", {
       position: "top-right",
       autoClose: 2000,
       hideProgressBar: false,
@@ -43,13 +38,12 @@ const ResponseView = () => {
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      onClose: () => navigate('/hqhomepage')
+      onClose: () => navigate("/hqhomepage"),
     });
-    
+
     // Clear form after successful submission
-    setResponse('');
-    setWorkDoneBy('');
-    setRespondBy('');
+    setResponse("");
+    setRespondBy("");
   };
 
   const handleTransferToRFI = () => {
@@ -57,12 +51,12 @@ const ResponseView = () => {
       return;
     }
     // Handle RFI transfer logic here
-    console.log('Transferred to RFI:', rfiNumber);
+    console.log("Transferred to RFI:", rfiNumber);
     setShowRFIModal(false);
-    setRFINumber('');
-    
+    setRFINumber("");
+
     // Show success toast for RFI transfer
-    toast.success('Successfully transferred to RFI!', {
+    toast.success("Successfully transferred to RFI!", {
       position: "top-right",
       autoClose: 2000,
       hideProgressBar: false,
@@ -70,7 +64,7 @@ const ResponseView = () => {
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      onClose: () => navigate('/hqhomepage')
+      onClose: () => navigate("/hqhomepage"),
     });
   };
 
@@ -81,7 +75,7 @@ const ResponseView = () => {
           <div className="company-logo">
             <h1>H&R Detailing</h1>
           </div>
-          <button className="logout-button" onClick={() => navigate('/')}>
+          <button className="logout-button" onClick={() => navigate("/")}>
             Log Out
           </button>
         </div>
@@ -105,7 +99,7 @@ const ResponseView = () => {
         <div className="company-logo">
           <h1>H&R Detailing</h1>
         </div>
-        <button className="logout-button" onClick={() => navigate('/')}>
+        <button className="logout-button" onClick={() => navigate("/")}>
           Log Out
         </button>
       </div>
@@ -126,15 +120,21 @@ const ResponseView = () => {
               </div>
               <div className="detail-row">
                 <span className="detail-label">HRD Detailer Initials:</span>
-                <span className="detail-value">{questionData.HRD_Detailer_Initials}</span>
+                <span className="detail-value">
+                  {questionData.HRD_Detailer_Initials}
+                </span>
               </div>
               <div className="detail-row">
                 <span className="detail-label">Design Reference:</span>
-                <span className="detail-value">{questionData.Design_reference}</span>
+                <span className="detail-value">
+                  {questionData.Design_reference}
+                </span>
               </div>
               <div className="detail-row">
                 <span className="detail-label">Sequence/Zone/Area:</span>
-                <span className="detail-value">{questionData.Seq_area_zone?.split('/')[0]}</span>
+                <span className="detail-value">
+                  {questionData.Seq_area_zone?.split("/")[0]}
+                </span>
               </div>
               <div className="detail-row">
                 <span className="detail-label">Stage:</span>
@@ -152,7 +152,9 @@ const ResponseView = () => {
               </div>
               <div className="detail-row">
                 <span className="detail-label">Status:</span>
-                <span className={`status-badge ${questionData.status}`}>{questionData.status}</span>
+                <span className={`status-badge ${questionData.status}`}>
+                  {questionData.status}
+                </span>
               </div>
             </div>
           </div>
@@ -161,7 +163,9 @@ const ResponseView = () => {
             <h3>Question</h3>
             <div className="question-text">
               <p>{questionData.q}</p>
-              <span className="sent-datetime">Sent date and time: {questionData.date}</span>
+              <span className="sent-datetime">
+                Sent date and time: {questionData.date}
+              </span>
             </div>
           </div>
 
@@ -173,7 +177,7 @@ const ResponseView = () => {
               onChange={(e) => {
                 setResponse(e.target.value);
                 if (e.target.value.trim()) {
-                  setError('');
+                  setError("");
                 }
               }}
               placeholder="Type your response here..."
@@ -181,8 +185,6 @@ const ResponseView = () => {
             />
 
             <div className="response-details">
-            
-
               <div className="input-group">
                 <label>Respond By:</label>
                 <input
@@ -195,11 +197,7 @@ const ResponseView = () => {
               </div>
             </div>
 
-            {error && (
-              <div className="error-message">
-                {error}
-              </div>
-            )}
+            {error && <div className="error-message">{error}</div>}
 
             <div className="response-actions">
               <button
@@ -208,10 +206,7 @@ const ResponseView = () => {
               >
                 Transfer to RFI
               </button>
-              <button
-                className="respond-button"
-                onClick={handleRespond}
-              >
+              <button className="respond-button" onClick={handleRespond}>
                 Respond
               </button>
             </div>
@@ -219,7 +214,9 @@ const ResponseView = () => {
 
           <div className="additional-notes">
             <span className="detail-label">Additional Notes:</span>
-            <span className="detail-value">{questionData.Additional_Notes}</span>
+            <span className="detail-value">
+              {questionData.Additional_Notes}
+            </span>
           </div>
         </div>
       </div>
@@ -237,16 +234,16 @@ const ResponseView = () => {
               placeholder="Enter RFI number"
             />
             <div className="modal-actions">
-              <button 
+              <button
                 className="modal-cancel-button"
                 onClick={() => {
                   setShowRFIModal(false);
-                  setRFINumber('');
+                  setRFINumber("");
                 }}
               >
                 Cancel
               </button>
-              <button 
+              <button
                 className="modal-transfer-button"
                 onClick={handleTransferToRFI}
               >
