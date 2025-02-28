@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userData } from "./data/userdata";
+import "../style.css"; // Assuming your CSS is in this file
 
 const RoleSelectionPage = () => {
   const [username, setUsername] = useState("");
@@ -40,39 +41,30 @@ const RoleSelectionPage = () => {
     { role: "Branch Admin (Bangalore)", username: "BA0204" },
     { role: "Branch User (Chennai)", username: "BU0301" },
     { role: "Branch User (Chennai)", username: "BU0302" },
-    // { role: "Password for all users", username: "password123" },
   ];
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
   };
 
-  // Updated handleUsernameChange to auto-fill password
   const handleUsernameChange = (e) => {
     const newUsername = e.target.value;
     setUsername(newUsername);
-    // Auto-fill password when a valid username is typed
     const isValidUsername = availableUsers.some(
-      (user) => user.username === newUsername && user.username !== "password123"
+      (user) => user.username === newUsername
     );
     if (isValidUsername) {
       setPassword("password123");
     } else {
-      setPassword(""); // Clear password if username is invalid
+      setPassword("");
     }
   };
 
-  // Updated handleUsernameClick to auto-fill both username and password
   const handleUsernameClick = (selectedUsername) => {
-    if (selectedUsername !== "password123") {
-      setUsername(selectedUsername);
-      setPassword("password123"); // Auto-fill password when username is clicked
-    }
+    setUsername(selectedUsername);
+    setPassword("password123");
     setIsDropdownOpen(false);
   };
-
-  // Remove handlePasswordClick since it's no longer needed
-  // Password will auto-fill with username
 
   return (
     <div className="login-container">
@@ -92,7 +84,7 @@ const RoleSelectionPage = () => {
                 id="username"
                 className="input-field"
                 value={username}
-                onChange={handleUsernameChange} // Updated to use new handler
+                onChange={handleUsernameChange}
                 required
                 placeholder="Enter your username"
               />
@@ -104,7 +96,7 @@ const RoleSelectionPage = () => {
                 id="password"
                 className="input-field"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)} // Still allow manual changes if needed
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="Enter your password"
               />
@@ -115,12 +107,15 @@ const RoleSelectionPage = () => {
           </form>
         </div>
 
+        {/* Moved user-dropdown-container below login-form */}
         <div className="user-dropdown-container">
           <button className="user-dropdown-button" onClick={toggleDropdown}>
             Show Available Users
           </button>
           {isDropdownOpen && (
             <div className="user-dropdown-content">
+              <div className="user-role">Click the Username to login</div>
+              <br />
               {availableUsers.map((user, index) => (
                 <div key={index} className="user-item">
                   <span

@@ -27,11 +27,13 @@
 }
 
 .login-box {
-  position: relative;
   padding: 10px;
   min-height: 80vh;
   max-width: 400px;
-  /* Adjust as needed */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* Center content vertically */
 }
 
 .logo {
@@ -1021,15 +1023,14 @@
   }
 }
 .user-dropdown-container {
-  position: absolute;
-  left: 20%;
-  padding-top: 20px;
+  margin-top: 20px;
+  /* Space between login form and button */
+  text-align: center;
+  /* Center the button */
 }
-
 .user-dropdown-button {
   padding: 8px 16px;
   font-size: 14px;
-  box-shadow: 4px 8px 8px rgba(5, 35, 65, 0.055);
   font-weight: 500;
   color: #6e7073;
   background-color: #f3f4f6;
@@ -1046,10 +1047,11 @@
 
 .user-dropdown-content {
   position: absolute;
-  top: 100%;
-  /* Below the button */
-  right: -65px;
-  /* Align to the right of the button */
+  /* Still absolute to float above other content */
+  left: 50%;
+  /* Center horizontally */
+  transform: translateX(-50%);
+  /* Offset to truly center it */
   background-color: #ffffff;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
@@ -1059,8 +1061,9 @@
   min-width: 300px;
   max-height: 300px;
   overflow-y: auto;
+  margin-top: 5px;
+  /* Small gap between button and dropdown */
 }
-
 .user-item {
   padding: 8px 12px;
   display: flex;
@@ -1070,7 +1073,6 @@
   color: #374151;
   border-bottom: 1px solid #f3f4f6;
 }
-
 .user-item:last-child {
   border-bottom: none;
 }
@@ -1102,21 +1104,19 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .user-dropdown-container {
-    top: 5px;
-    right: 5px;
-  }
 
   .user-dropdown-button {
     padding: 6px 12px;
     font-size: 12px;
   }
 
-  .user-dropdown-content {
-    min-width: 250px;
-    right: -210px;
-    /* Ensure it stays right-aligned */
-  }
+ .user-dropdown-container {
+   margin-top: 15px;
+ }
+
+ .user-dropdown-content {
+   min-width: 250px;
+ }
 }
 
 /* Add these styles to your existing style.css */
