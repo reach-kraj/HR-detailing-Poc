@@ -1,14 +1,64 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowUpDown } from "lucide-react";
 import "../filter/filter.css";
-import { useJobQuestions } from "../data/hooks/useJobQuestions"; // Import the custom hook
+import { useJobQuestions } from "../data/hooks/useJobQuestions";
+import { branchData, jobData } from "../data/userdata"; // Added import
+import HRlogo from "../HRlogo.png"; // Added logo import
 
 const SelectQuestion = () => {
   const navigate = useNavigate();
   const [sortOrder, setSortOrder] = useState("asc");
   const [searchQuery, setSearchQuery] = useState("");
-  const { questions, loading, error } = useJobQuestions(); // Use the hook
+  const { questions, loading, error } = useJobQuestions();
+
+  // Added state for header information
+  const [currentUser, setCurrentUser] = useState(null);
+  const [branchInfo, setBranchInfo] = useState({
+    branchCode: "N/A",
+    branchName: "N/A",
+  });
+  const [jobInfo, setJobInfo] = useState({ jobCode: "N/A", jobName: "N/A" });
+
+  // Added useEffect for fetching user/branch/job info
+  useEffect(() => {
+    const user = JSON.parse(sessionStorage.getItem("currentUser"));
+    if (!user) {
+      console.log("No user found in sessionStorage, redirecting to login");
+      navigate("/");
+      return;
+    }
+    setCurrentUser(user);
+
+    const selectedBranch = JSON.parse(sessionStorage.getItem("selectedBranch"));
+    if (selectedBranch) {
+      setBranchInfo({
+        branchCode: selectedBranch.branchCode,
+        branchName: selectedBranch.branchName,
+      });
+    } else {
+      const branch = branchData.find((b) => b.branchCode === user.branchCode);
+      if (branch) {
+        setBranchInfo({
+          branchCode: branch.branchCode,
+          branchName: branch.branchName,
+        });
+      }
+    }
+
+    const selectedJob = sessionStorage.getItem("selectedJob")
+      ? JSON.parse(sessionStorage.getItem("selectedJob"))
+      : user.jobs && user.jobs.length > 0
+      ? jobData.find((j) => j.jobNo === user.jobs[0])
+      : null;
+
+    if (selectedJob) {
+      setJobInfo({
+        jobCode: selectedJob.jobNo,
+        jobName: selectedJob.jobName,
+      });
+    }
+  }, [navigate]);
 
   const handleQuestionClick = (clNo) => {
     navigate(`/resquestion/${clNo}`);
@@ -60,12 +110,48 @@ const SelectQuestion = () => {
 
   if (loading) return <div>Loading questions...</div>;
   if (error) return <div>{error}</div>;
+  if (!currentUser) return null;
 
   return (
     <div className="home-container">
+      {/* Updated Header */}
       <div className="home-header">
         <div className="company-logo">
-          <h1>H&R Detailing</h1>
+          <div className="logo-home">
+            <img src={HRlogo} alt="H&R Detailing Logo" className="logo-image" />
+          </div>
+        </div>
+        <div className="employee-info">
+          <div>
+            <h4>Branch Code:</h4>
+          </div>
+          <div className="profile-int">
+            <h4>{branchInfo.branchCode}</h4>
+          </div>
+          <div>
+            <h4>Branch Name:</h4>
+          </div>
+          <div className="profile-int">
+            <h4>{branchInfo.branchName}</h4>
+          </div>
+          <div>
+            <h4>Job Code:</h4>
+          </div>
+          <div className="profile-int">
+            <h4>{jobInfo.jobCode}</h4>
+          </div>
+          <div>
+            <h4>Job Name:</h4>
+          </div>
+          <div className="profile-int">
+            <h4>{jobInfo.jobName}</h4>
+          </div>
+          <div>
+            <h4>Logged in as:</h4>
+          </div>
+          <div className="profile-int">
+            <h4>{currentUser.username}</h4>
+          </div>
         </div>
         <button className="logout-button" onClick={() => navigate("/")}>
           Log Out
@@ -103,7 +189,7 @@ const SelectQuestion = () => {
             filteredQuestions.map((question, index) => (
               <div
                 key={`${question.clNo}-${index}`}
-                className="question-card"
+                className="question-cards"
                 onClick={() => handleQuestionClick(question.clNo)}
               >
                 <div className="question-date">{question.date}</div>

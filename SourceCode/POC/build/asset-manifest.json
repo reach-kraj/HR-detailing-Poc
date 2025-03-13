@@ -1,15 +1,16 @@
 {
   "files": {
-    "main.css": "/static/css/main.f0aa9527.css",
-    "main.js": "/static/js/main.d85b8af6.js",
+    "main.css": "/static/css/main.f6a4f972.css",
+    "main.js": "/static/js/main.d91ef0aa.js",
     "static/js/567.b5a62b69.chunk.js": "/static/js/567.b5a62b69.chunk.js",
     "static/js/642.cb4d7765.chunk.js": "/static/js/642.cb4d7765.chunk.js",
     "static/js/129.bb767070.chunk.js": "/static/js/129.bb767070.chunk.js",
     "static/js/596.f4159825.chunk.js": "/static/js/596.f4159825.chunk.js",
     "static/js/488.c8e6081c.chunk.js": "/static/js/488.c8e6081c.chunk.js",
+    "static/media/HRlogo.png": "/static/media/HRlogo.1b0b3a0061730749bd94.png",
     "index.html": "/index.html",
-    "main.f0aa9527.css.map": "/static/css/main.f0aa9527.css.map",
-    "main.d85b8af6.js.map": "/static/js/main.d85b8af6.js.map",
+    "main.f6a4f972.css.map": "/static/css/main.f6a4f972.css.map",
+    "main.d91ef0aa.js.map": "/static/js/main.d91ef0aa.js.map",
     "567.b5a62b69.chunk.js.map": "/static/js/567.b5a62b69.chunk.js.map",
     "642.cb4d7765.chunk.js.map": "/static/js/642.cb4d7765.chunk.js.map",
     "129.bb767070.chunk.js.map": "/static/js/129.bb767070.chunk.js.map",
@@ -17,7 +18,7 @@
     "488.c8e6081c.chunk.js.map": "/static/js/488.c8e6081c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.f0aa9527.css",
-    "static/js/main.d85b8af6.js"
+    "static/css/main.f6a4f972.css",
+    "static/js/main.d91ef0aa.js"
   ]
 }

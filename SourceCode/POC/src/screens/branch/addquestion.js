@@ -1,30 +1,37 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useJobQuestions } from "../data/hooks/useJobQuestions"; // Import the hook
+import { useJobQuestions } from "../data/hooks/useJobQuestions";
+import HRlogo from "../HRlogo.png";
+import { Paperclip } from "lucide-react";
+import { ToastContainer, toast } from "react-toastify"; // Added toast imports
+import "react-toastify/dist/ReactToastify.css"; // Added toast CSS import
 
 const AddQuestion = () => {
   const navigate = useNavigate();
-  const { questions, loading, error } = useJobQuestions(); // Fetch questions data
+  const { questions, loading, error } = useJobQuestions();
   const currentDate = new Date().toLocaleDateString("en-GB");
 
-  // Function to generate the next clNo based on fetched questions
-  const getNextClNo = (questions) => {
-    if (!questions || questions.length === 0) return "CL001"; // Default if no questions exist
+  const [currentUser, setCurrentUser] = useState(null);
+  const [branchInfo, setBranchInfo] = useState({
+    branchCode: "N/A",
+    branchName: "N/A",
+  });
+  const [jobInfo, setJobInfo] = useState({ jobCode: "N/A", jobName: "N/A" });
+  const [attachedFile, setAttachedFile] = useState(null);
 
-    // Extract numeric part from clNo (e.g., "005" from "CL005")
+  const getNextClNo = (questions) => {
+    if (!questions || questions.length === 0) return "CL001";
     const clNumbers = questions.map((q) =>
       parseInt(q.clNo.replace("CL", ""), 10)
     );
-    const maxClNo = Math.max(...clNumbers); // Find the highest number
-    const nextClNo = maxClNo + 1; // Increment it
-
-    // Format as "CLXXX" with leading zeros (e.g., "CL006")
+    const maxClNo = Math.max(...clNumbers);
+    const nextClNo = maxClNo + 1;
     return `CL${String(nextClNo).padStart(3, "0")}`;
   };
 
   const [formData, setFormData] = useState({
-    clNo: "", // Will be set dynamically after data loads
+    clNo: "",
     hrRfiNumber: "",
     hrdDetailerInitials: "",
     designReference: "",
@@ -36,9 +43,34 @@ const AddQuestion = () => {
     additionalNotes: "",
     question: "",
     status: "Open",
+    workDoneBy: "",
   });
 
-  // Set the initial clNo once questions data is fetched
+  useEffect(() => {
+    const user = JSON.parse(sessionStorage.getItem("currentUser"));
+    if (!user) {
+      navigate("/");
+      return;
+    }
+    setCurrentUser(user);
+
+    const selectedBranch = JSON.parse(sessionStorage.getItem("selectedBranch"));
+    if (selectedBranch) {
+      setBranchInfo({
+ branchCode: selectedBranch.branchCode,
+        branchName: selectedBranch.branchName,
+      });
+    }
+
+    const selectedJob = JSON.parse(sessionStorage.getItem("selectedJob"));
+    if (selectedJob) {
+      setJobInfo({
+        jobCode: selectedJob.jobNo,
+        jobName: selectedJob.jobName,
+      });
+    }
+  }, [navigate]);
+
   useEffect(() => {
     if (!loading && !error && questions.length > 0) {
       const nextClNo = getNextClNo(questions);
@@ -49,7 +81,7 @@ const AddQuestion = () => {
     } else if (!loading && (!questions || questions.length === 0)) {
       setFormData((prevState) => ({
         ...prevState,
-        clNo: "CL001", // Fallback if no questions exist
+        clNo: "CL001",
       }));
     }
   }, [loading, error, questions]);
@@ -62,21 +94,63 @@ const AddQuestion = () => {
     }));
   };
 
+  const handleFileAttach = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setAttachedFile({
+        name: file.name,
+        uploaded: true,
+      });
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData); // Log the form data with dynamic clNo
-    navigate("/brhomepage"); // Adjust to your route
+    console.log({
+      ...formData,
+      attachedFile: attachedFile ? attachedFile.name : null,
+    });
+
+    // Show success toast
+    toast.success("Question submitted successfully!", {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      onClose: () => {
+        setAttachedFile(null); // Clear attachment after submission
+        navigate("/brhomepage"); // Navigate after toast closes
+      },
+    });
   };
 
   if (loading) return <div>Loading questions...</div>;
   if (error) return <div>Error loading questions: {error}</div>;
+  if (!currentUser) return null;
 
   return (
     <div className="home-container">
-      {/* Header */}
+      <ToastContainer /> {/* Added ToastContainer */}
       <div className="home-header">
         <div className="company-logo">
-          <h1>H&R Detailing</h1>
+          <div className="logo-home">
+            <img src={HRlogo} alt="H&R Detailing Logo" className="logo-image" />
+          </div>
+        </div>
+        <div className="employee-info">
+          <div><h4>Branch Code:</h4></div>
+          <div className="profile-int"><h4>{branchInfo.branchCode}</h4></div>
+          <div><h4>Branch Name:</h4></div>
+          <div className="profile-int"><h4>{branchInfo.branchName}</h4></div>
+          <div><h4>Job Code:</h4></div>
+          <div className="profile-int"><h4>{jobInfo.jobCode}</h4></div>
+          <div><h4>Job Name:</h4></div>
+          <div className="profile-int"><h4>{jobInfo.jobName}</h4></div>
+          <div><h4>Logged in as:</h4></div>
+          <div className="profile-int"><h4>{currentUser.username}</h4></div>
         </div>
         <button className="logout-button" onClick={() => navigate("/")}>
           Log Out
@@ -91,7 +165,6 @@ const AddQuestion = () => {
           </div>
 
           <div className="form-grid">
-            {/* Display CL No as static text */}
             <div className="form-group">
               <label htmlFor="clNo">CL No:</label>
               <div className="input-field static-text">{formData.clNo}</div>
@@ -121,9 +194,7 @@ const AddQuestion = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="hrdDetailerInitials">
-                HRD Detailer Initials:
-              </label>
+              <label htmlFor="hrdDetailerInitials">HRD Detailer Initials:</label>
               <input
                 type="text"
                 id="hrdDetailerInitials"
@@ -218,8 +289,8 @@ const AddQuestion = () => {
               <input
                 type="text"
                 id="workDoneBy"
-                name="workDoneBy" // Fixed name to match field
-                value={formData.workDoneBy || ""} // Use a unique field name
+                name="workDoneBy"
+                value={formData.workDoneBy}
                 onChange={handleChange}
                 className="input-field"
                 required
@@ -229,15 +300,35 @@ const AddQuestion = () => {
 
           <div className="form-group full-width">
             <label htmlFor="question">Question:</label>
-            <textarea
-              id="question"
-              name="question"
-              value={formData.question}
-              onChange={handleChange}
-              className="input-field textarea"
-              required
-              rows="6"
-            />
+            <div className="question-input-container">
+              <textarea
+                id="question"
+                name="question"
+                value={formData.question}
+                onChange={handleChange}
+                className="input-field textarea"
+                required
+                rows="6"
+              />
+              <div className="attachment-section">
+                <label htmlFor="file-upload" className="attachment-label">
+                  <Paperclip className="attachment-icon" size={20} />
+                  Attach File
+                </label>
+                <input
+                  id="file-upload"
+                  type="file"
+                  onChange={handleFileAttach}
+                  style={{ display: "none" }}
+                />
+                {attachedFile && (
+                  <div className="attachment-info">
+                    <span className="attachment-filename">{attachedFile.name}</span>
+                    <span className="attachment-status">Uploaded</span>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="form-actions">

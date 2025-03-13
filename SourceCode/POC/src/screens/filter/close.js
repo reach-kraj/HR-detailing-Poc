@@ -65,21 +65,6 @@ const Close = () => {
 
   return (
     <div className="home-container">
-      <div className="home-header">
-        <div className="company-logo">
-          <h1>H&R Detailing</h1>
-        </div>
-        <button className="logout-button" onClick={() => navigate("/")}>
-          Log Out
-        </button>
-      </div>
-
-      <div className="back-button-div">
-        <button className="back-button" onClick={() => navigate(-1)}>
-          Back
-        </button>
-      </div>
-
       <div className="home-content-box">
         <div className="questions-header">
           <h2>Closed Questions ({filteredQuestions.length})</h2>
@@ -105,7 +90,7 @@ const Close = () => {
             filteredQuestions.map((question, index) => (
               <div
                 key={`${question.clNo}-${index}`}
-                className="question-card"
+                className="question-cards"
                 onClick={() => handleQuestionClick(question.clNo)}
               >
                 <div className="question-date">{question.date}</div>

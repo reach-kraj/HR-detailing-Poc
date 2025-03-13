@@ -1,7 +1,9 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userData } from "./data/userdata";
 import "../style.css"; // Assuming your CSS is in this file
+import HRlogo from "./HRlogo.png"; // Import the logo image (adjust the path as needed)
 
 const RoleSelectionPage = () => {
   const [username, setUsername] = useState("");
@@ -70,8 +72,8 @@ const RoleSelectionPage = () => {
     <div className="login-container">
       <div className="login-box">
         <div className="logo">
-          <h1>H&R Detailing</h1>
-          <h2>Clarity List</h2>
+          <img src={HRlogo} alt="H&R Detailing Logo" className="company-logo-main" />
+          <h2>Clarification List</h2>
         </div>
         <div className="login-form">
           <h2>Login</h2>
@@ -107,7 +109,6 @@ const RoleSelectionPage = () => {
           </form>
         </div>
 
-        {/* Moved user-dropdown-container below login-form */}
         <div className="user-dropdown-container">
           <button className="user-dropdown-button" onClick={toggleDropdown}>
             Show Available Users

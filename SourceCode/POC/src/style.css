@@ -196,12 +196,12 @@
 .home-header {
   background-color: #232f3e;
   box-shadow: 4px 8px 8px rgba(5, 35, 65, 0.055);
-  padding: 1rem;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
+  padding-bottom: 1px;
 }
 
 .company-logo h1 {
@@ -298,14 +298,15 @@
 }
 
 .logout-button {
-  background: linear-gradient(to bottom, #f7f8fa, #e7e9ec);
+  background: linear-gradient(to bottom, #f7f8fa, #b1b0b0);
   border: 1px solid #adb1b8;
   border-radius: 3px;
   color: #111;
   cursor: pointer;
-  padding: 8px 16px;
-  font-size: 13px;
-  font-weight: 500;
+  padding: 10px 25px 10px 25px;
+  font-size: 15px;
+  font-weight: 700;
+  width: 140px;
   transition: all 0.2s;
 }
 
@@ -414,7 +415,7 @@
 }
 
 .status-badge.open {
-  background-color: #2ecc71;
+  background-color: #b2f5cf;
   color: white;
 }
 
@@ -509,7 +510,7 @@
 .back-button-div {
   margin-left: 10%;
   margin-top: 1%;
-  margin-bottom: 3%;
+  margin-bottom: 1%;
 }
 
 /* homepage */
@@ -577,23 +578,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 15px;
-  margin-bottom: 1.5rem;
+  padding: 1px 1px 1px;
+/* margin-bottom: 10px; */
 }
 
 .search-container {
-  position: relative;
-  width: 240px;
+  margin-bottom: 15px;
+  /* Space between search and filter list */
 }
 
 .search-input {
-  width: 100%;
-  padding: 10px 15px 10px 40px;
+  width: 100px;
+  padding: 12px 16px;
   border: 1px solid #dee2e6;
-  border-radius: 6px;
+  border-radius: 8px;
   background-color: #f8f9fa;
   color: #2c3e50;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   transition: all 0.3s ease;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23757575' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3ccircle cx='11' cy='11' r='8'/%3e%3cpath d='M21 21l-4.35-4.35'/%3e%3c/svg%3e");
   background-repeat: no-repeat;
@@ -674,7 +675,7 @@
 }
 
 /* Question Card Styles */
-.question-card {
+.question-cards {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
@@ -684,7 +685,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.question-card:hover {
+.question-cards:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transform: translateY(-1px);
 }
@@ -733,12 +734,12 @@
 
 .status-badge.open {
   background-color: #e8f5e9;
-  color: #2e7d32;
+  color: #8dff92;
 }
 
 .status-badge.closed {
   background-color: #e8f5e9;
-  color: #f90101;
+  color: #f99999;
 }
 
 /* Search Input Styles - Enhanced from your existing styles */
@@ -747,8 +748,8 @@
   width: 300px;
 }
 
-.search-input {
-  width: 100%;
+.search-inputs {
+  width: 85%;
   padding: 10px 16px;
   padding-left: 40px;
   border: 1px solid #e0e0e0;
@@ -941,10 +942,10 @@
 } */
 .employee-info {
   display: flex;
-  gap: 14px; /* Adjust space between items */
+  gap: 15px; /* Adjust space between items */
   align-items: center; /* Aligns items vertically */
   color: #caac01;
-  padding-left: 100px;
+  padding-right: 30px;
 }
 .profile-int {
   color: white;
@@ -974,9 +975,8 @@
   border: 1px solid #e5e7eb;
   border-radius: 8px;
   padding: 20px;
-  margin: 20px 0;
-  /* Space above and below */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin: 0;
+  /* Remove extra margin since it's in top-section */
 }
 
 .summary-title {
@@ -1170,7 +1170,7 @@
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  gap: 10px;
 }
 
 .form-group {
@@ -1197,4 +1197,251 @@
 
 .submit-button:hover {
   background-color: #0056b3;
+}
+
+  /* Add these styles to your existing style.css logo*/
+    /* Style for the company logo */
+    .company-logo {
+      width: 300px;
+      /* Adjust the width as needed */
+      height: auto;
+      /* Maintain aspect ratio */
+      display: block;
+      /* Ensure it’s a block element */
+      margin: 0 auto 10px;
+      /* Center it horizontally and add spacing below */
+    }
+            .company-logo-main {
+              width: 300px;
+              /* Adjust the width as needed */
+              height: auto;
+              /* Maintain aspect ratio */
+              display: block;
+              /* Ensure it’s a block element */
+              margin: 0 auto 75px;
+              /* Center it horizontally and add spacing below */
+            }
+  
+    /* Ensure the logo container aligns properly */
+    .logo {
+      text-align: center;
+      /* Center the logo and subtitle */
+      padding: 20px 0;
+      /* Add some padding for spacing */
+    }
+  
+    /* Optional: Adjust the subtitle (Clarity List) */
+    .logo h2 {
+      font-size: 1.2rem;
+      /* Adjust size as needed */
+      margin: 0;
+      /* Remove default margin */
+      color: #333;
+      /* Match your theme */
+    }
+
+.mail-app-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 80px);
+  /* Adjust based on header height */
+  width: 100%;
+  background-color: #f3f3f3;
+  margin-top: 20px;
+}
+.top-section {
+  padding: 20px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+}
+.split-panel {
+  display: flex;
+  flex: 1;
+  /* Takes remaining height */
+  overflow: hidden;
+  /* Prevents overflow issues */
+}
+.left-panel {
+  width: 300px;
+  background-color: #ffffff;
+  border-right: 1px solid #e0e0e0;
+  padding: 20px;
+  overflow-y: auto;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+}
+
+.filter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-item {
+  background-color: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #2c3e50;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-item:hover {
+  background-color: #e9ecef;
+  transform: translateX(2px);
+}
+
+.filter-item.active {
+  background-color: #4a90e2;
+  color: #ffffff;
+  border-color: #4a90e2;
+  font-weight: 500;
+}
+
+/* Right Panel (Content) */
+.right-panel {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #ffffff;
+}
+
+.welcome-message {
+  text-align: center;
+  padding: 50px;
+  color: #2c3e50;
+}
+
+.welcome-message h2 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+
+.welcome-message p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 0 0 20px 0;
+  /* Adjusted padding */
+}
+/* Clno Container Adjustments */
+.clno-container {
+  width: 100%;
+  height: 100%;
+}
+
+.questions-header {
+  margin-bottom: 20px;
+}
+
+.questions-list {
+  max-height: calc(100vh - 200px);
+  /* Adjust based on header and other elements */
+  overflow-y: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .mail-app-container {
+    height: auto;
+    /* Allow natural height on small screens */
+  }
+
+  .split-panel {
+    flex-direction: column;
+  }
+
+.left-panel {
+  width: 100%;
+  max-height: 300px;
+  border-right: none;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+  .right-panel {
+    width: 100%;
+  }
+
+  .button-container {
+    flex-direction: column;
+    gap: 16px;
+  }
+    .logo-image {
+      max-width: 120px;
+      /* Smaller size on mobile */
+    }
+}
+
+.logo-home {
+  text-align: center;
+  margin-bottom: 1px;
+  background-color: #ffffff;
+  /* White background behind the logo */
+  padding: 10px;
+  width: 170px;
+  /* Padding to create space around the logo */
+  border-radius: 8px;
+  /* Optional: rounded corners for a cleaner look */
+}
+
+/* Logo Image */
+.logo-image {
+  max-width: 150px;
+  /* Adjust size as needed */
+  height: auto;
+  /* Maintain aspect ratio */
+  display: block;
+  /* Center the image */
+  margin: 0 auto;
+  /* Center horizontally */
+}
+
+.response-input-container {
+  position: relative;
+  margin-bottom: 15px;
+}
+
+.attachment-section {
+  margin-top: 10px;
+}
+
+.attachment-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #4CAF50;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.attachment-icon {
+  stroke: #4CAF50;
+}
+
+.attachment-info {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.attachment-filename {
+  font-size: 14px;
+  color: #333;
+}
+
+.attachment-status {
+  font-size: 12px;
+  color: #fff;
+  background-color: #4CAF50;
+  padding: 2px 8px;
+  border-radius: 12px;
 }

@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import questionsData from "./data/template";
+import { branchData, jobData } from "./data/userdata";
+import HRlogo from "./HRlogo.png";
+import { Paperclip } from "lucide-react"; // Added Paperclip icon from lucide-react
 
 const ResponseView = () => {
   const { clNo } = useParams();
@@ -12,9 +16,66 @@ const ResponseView = () => {
   const [error, setError] = useState("");
   const [showRFIModal, setShowRFIModal] = useState(false);
   const [rfiNumber, setRFINumber] = useState("");
+  const [attachedFile, setAttachedFile] = useState(null); // Added state for mock attachment
 
-  // Find the question data based on clNo
+  const [currentUser, setCurrentUser] = useState(null);
+  const [branchInfo, setBranchInfo] = useState({
+    branchCode: "N/A",
+    branchName: "N/A",
+  });
+  const [jobInfo, setJobInfo] = useState({ jobCode: "N/A", jobName: "N/A" });
+
   const questionData = questionsData.find((q) => q.clNo === clNo);
+
+  useEffect(() => {
+    const user = JSON.parse(sessionStorage.getItem("currentUser"));
+    if (!user) {
+      console.log("No user found in sessionStorage, redirecting to login");
+      navigate("/");
+      return;
+    }
+    setCurrentUser(user);
+
+    const selectedBranch = JSON.parse(sessionStorage.getItem("selectedBranch"));
+    if (selectedBranch) {
+      setBranchInfo({
+        branchCode: selectedBranch.branchCode,
+        branchName: selectedBranch.branchName,
+      });
+    } else {
+      const branch = branchData.find((b) => b.branchCode === user.branchCode);
+      if (branch) {
+        setBranchInfo({
+          branchCode: branch.branchCode,
+          branchName: branch.branchName,
+        });
+      }
+    }
+
+    const selectedJob = sessionStorage.getItem("selectedJob")
+      ? JSON.parse(sessionStorage.getItem("selectedJob"))
+      : user.jobs && user.jobs.length > 0
+      ? jobData.find((j) => j.jobNo === user.jobs[0])
+      : null;
+
+    if (selectedJob) {
+      setJobInfo({
+        jobCode: selectedJob.jobNo,
+        jobName: selectedJob.jobName,
+      });
+    }
+  }, [navigate]);
+
+  // Mock file attachment handler
+  const handleFileAttach = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setAttachedFile({
+        name: file.name,
+        uploaded: true,
+      });
+    }
+  };
 
   const handleRespond = () => {
     if (!response.trim()) {
@@ -22,14 +83,13 @@ const ResponseView = () => {
       return;
     }
 
-    // Handle response submission logic here
     setError("");
     console.log("Response submitted:", {
       response,
       respondBy,
+      attachedFile: attachedFile ? attachedFile.name : null,
     });
 
-    // Show success toast
     toast.success("Response submitted successfully!", {
       position: "top-right",
       autoClose: 2000,
@@ -41,21 +101,19 @@ const ResponseView = () => {
       onClose: () => navigate("/hqhomepage"),
     });
 
-    // Clear form after successful submission
     setResponse("");
     setRespondBy("");
+    setAttachedFile(null); // Clear attachment after submission
   };
 
   const handleTransferToRFI = () => {
     if (!rfiNumber.trim()) {
       return;
     }
-    // Handle RFI transfer logic here
     console.log("Transferred to RFI:", rfiNumber);
     setShowRFIModal(false);
     setRFINumber("");
 
-    // Show success toast for RFI transfer
     toast.success("Successfully transferred to RFI!", {
       position: "top-right",
       autoClose: 2000,
@@ -68,12 +126,50 @@ const ResponseView = () => {
     });
   };
 
-  if (!questionData) {
+  if (!questionData || !currentUser) {
     return (
       <div className="home-container">
         <div className="home-header">
           <div className="company-logo">
-            <h1>H&R Detailing</h1>
+            <div className="logo-home">
+              <img
+                src={HRlogo}
+                alt="H&R Detailing Logo"
+                className="logo-image"
+              />
+            </div>
+          </div>
+          <div className="employee-info">
+            <div>
+              <h4>Branch Code:</h4>
+            </div>
+            <div className="profile-int">
+              <h4>{branchInfo.branchCode}</h4>
+            </div>
+            <div>
+              <h4>Branch Name:</h4>
+            </div>
+            <div className="profile-int">
+              <h4>{branchInfo.branchName}</h4>
+            </div>
+            <div>
+              <h4>Job Code:</h4>
+            </div>
+            <div className="profile-int">
+              <h4>{jobInfo.jobCode}</h4>
+            </div>
+            <div>
+              <h4>Job Name:</h4>
+            </div>
+            <div className="profile-int">
+              <h4>{jobInfo.jobName}</h4>
+            </div>
+            <div>
+              <h4>Logged in as:</h4>
+            </div>
+            <div className="profile-int">
+              <h4>{currentUser ? currentUser.username : "N/A"}</h4>
+            </div>
           </div>
           <button className="logout-button" onClick={() => navigate("/")}>
             Log Out
@@ -97,7 +193,41 @@ const ResponseView = () => {
       <ToastContainer />
       <div className="home-header">
         <div className="company-logo">
-          <h1>H&R Detailing</h1>
+          <div className="logo-home">
+            <img src={HRlogo} alt="H&R Detailing Logo" className="logo-image" />
+          </div>
+        </div>
+        <div className="employee-info">
+          <div>
+            <h4>Branch Code:</h4>
+          </div>
+          <div className="profile-int">
+            <h4>{branchInfo.branchCode}</h4>
+          </div>
+          <div>
+            <h4>Branch Name:</h4>
+          </div>
+          <div className="profile-int">
+            <h4>{branchInfo.branchName}</h4>
+          </div>
+          <div>
+            <h4>Job Code:</h4>
+          </div>
+          <div className="profile-int">
+            <h4>{jobInfo.jobCode}</h4>
+          </div>
+          <div>
+            <h4>Job Name:</h4>
+          </div>
+          <div className="profile-int">
+            <h4>{jobInfo.jobName}</h4>
+          </div>
+          <div>
+            <h4>Logged in as:</h4>
+          </div>
+          <div className="profile-int">
+            <h4>{currentUser.username}</h4>
+          </div>
         </div>
         <button className="logout-button" onClick={() => navigate("/")}>
           Log Out
@@ -171,18 +301,40 @@ const ResponseView = () => {
 
           <div className="response-section">
             <h3>Your Response</h3>
-            <textarea
-              className="response-textarea"
-              value={response}
-              onChange={(e) => {
-                setResponse(e.target.value);
-                if (e.target.value.trim()) {
-                  setError("");
-                }
-              }}
-              placeholder="Type your response here..."
-              rows={6}
-            />
+            <div className="response-input-container">
+              <textarea
+                className="response-textarea"
+                value={response}
+                onChange={(e) => {
+                  setResponse(e.target.value);
+                  if (e.target.value.trim()) {
+                    setError("");
+                  }
+                }}
+                placeholder="Type your response here..."
+                rows={6}
+              />
+              <div className="attachment-section">
+                <label htmlFor="file-upload" className="attachment-label">
+                  <Paperclip className="attachment-icon" size={20} />
+                  Attach File
+                </label>
+                <input
+                  id="file-upload"
+                  type="file"
+                  onChange={handleFileAttach}
+                  style={{ display: "none" }}
+                />
+                {attachedFile && (
+                  <div className="attachment-info">
+                    <span className="attachment-filename">
+                      {attachedFile.name}
+                    </span>
+                    <span className="attachment-status">Uploaded</span>
+                  </div>
+                )}
+              </div>
+            </div>
 
             <div className="response-details">
               <div className="input-group">
