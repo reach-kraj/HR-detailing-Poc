@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userData } from "./data/userdata";
@@ -39,8 +38,8 @@ const RoleSelectionPage = () => {
     { role: "Super Admin", username: "SA0101" },
     { role: "Branch Admin (Chennai)", username: "BA0201" },
     { role: "Branch Admin (Mumbai)", username: "BA0202" },
-    { role: "Branch Admin (Delhi)", username: "BA0203" },
-    { role: "Branch Admin (Bangalore)", username: "BA0204" },
+    { role: "Branch Admin (Nellai)", username: "BA0203" },
+    { role: "Branch Admin (Avadi)", username: "BA0204" },
     { role: "Branch User (Chennai)", username: "BU0301" },
     { role: "Branch User (Chennai)", username: "BU0302" },
   ];
@@ -72,7 +71,11 @@ const RoleSelectionPage = () => {
     <div className="login-container">
       <div className="login-box">
         <div className="logo">
-          <img src={HRlogo} alt="H&R Detailing Logo" className="company-logo-main" />
+          <img
+            src={HRlogo}
+            alt="H&R Detailing Logo"
+            className="company-logo-main"
+          />
           <h2>Clarification List</h2>
         </div>
         <div className="login-form">

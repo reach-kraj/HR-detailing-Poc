@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import questionsData from "./data/template";
-import { branchData, jobData } from "./data/userdata"; // Import userdata for branch and job info
+import { branchData } from "./data/userdata"; // Import userdata for branch and job info
 import HRlogo from "./HRlogo.png"; // Import the logo
 import "./questionview.css";
 
@@ -47,11 +47,28 @@ const QuestionView = () => {
       }
     }
 
-    const selectedJob = sessionStorage.getItem("selectedJob")
-      ? JSON.parse(sessionStorage.getItem("selectedJob"))
-      : user.jobs && user.jobs.length > 0
-      ? jobData.find((j) => j.jobNo === user.jobs[0])
-      : null;
+ const selectedJob = JSON.parse(sessionStorage.getItem("selectedJob"));
+ if (selectedJob) {
+   const branch = branchData.find(
+     (b) => b.branchCode === selectedBranch.branchCode
+   );
+   const job = branch?.jobs.find((j) => j.jobNo === selectedJob.jobNo);
+   if (job) {
+     setJobInfo({
+       jobCode: job.jobNo,
+       jobName: job.jobName,
+     });
+   }
+ } else if (user.jobs && user.jobs.length > 0) {
+   const branch = branchData.find((b) => b.branchCode === user.branchCode);
+   const firstJob = branch?.jobs.find((j) => j.jobNo === user.jobs[0]);
+   if (firstJob) {
+     setJobInfo({
+       jobCode: firstJob.jobNo,
+       jobName: firstJob.jobName,
+     });
+   }
+ }
 
     if (selectedJob) {
       setJobInfo({

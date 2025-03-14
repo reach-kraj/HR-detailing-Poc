@@ -1,8 +1,7 @@
-
-
 import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { branchData, jobData } from "../data/userdata";
+import { ArrowUpDown } from "lucide-react";
+import { branchData } from "../data/userdata";
 import { useJobQuestions } from "../data/hooks/useJobQuestions";
 import HRlogo from "../HRlogo.png";
 
@@ -31,6 +30,7 @@ const HeadHomepage = () => {
   });
   const [jobInfo, setJobInfo] = useState({ jobCode: "N/A", jobName: "N/A" });
   const [selectedFilter, setSelectedFilter] = useState(null);
+  const [sortOrder, setSortOrder] = useState("desc");
 
   const { questions, loading, error } = useJobQuestions();
 
@@ -60,7 +60,7 @@ const HeadHomepage = () => {
     { name: "Date sent", route: "/filter/datesent", component: DateSent },
     { name: "Response", route: "/filter/Response", component: Response },
     { name: "Response Date", route: "/filter/Resdate", component: ResDate },
-    { name: "View All", route: "/brview-all", component: null }, // Adjusted for headquarter context
+    { name: "View All", route: "/brview-all", component: null },
   ];
 
   useEffect(() => {
@@ -97,11 +97,28 @@ const HeadHomepage = () => {
       }
     }
 
-    const selectedJob = sessionStorage.getItem("selectedJob")
-      ? JSON.parse(sessionStorage.getItem("selectedJob"))
-      : user.jobs && user.jobs.length > 0
-      ? jobData.find((j) => j.jobNo === user.jobs[0])
-      : null;
+    const selectedJob = JSON.parse(sessionStorage.getItem("selectedJob"));
+    if (selectedJob) {
+      const branch = branchData.find(
+        (b) => b.branchCode === selectedBranch?.branchCode
+      );
+      const job = branch?.jobs.find((j) => j.jobNo === selectedJob.jobNo);
+      if (job) {
+        setJobInfo({
+          jobCode: job.jobNo,
+          jobName: job.jobName,
+        });
+      }
+    } else if (user.jobs && user.jobs.length > 0) {
+      const branch = branchData.find((b) => b.branchCode === user.branchCode);
+      const firstJob = branch?.jobs.find((j) => j.jobNo === user.jobs[0]);
+      if (firstJob) {
+        setJobInfo({
+          jobCode: firstJob.jobNo,
+          jobName: firstJob.jobName,
+        });
+      }
+    }
 
     if (selectedJob) {
       console.log("Selected Job:", selectedJob);
@@ -114,6 +131,20 @@ const HeadHomepage = () => {
       setJobInfo({ jobCode: "N/A", jobName: "N/A" });
     }
   }, [navigate]);
+
+  const getSortedQuestions = useCallback(() => {
+    try {
+      const sorted = [...questions].sort((a, b) => {
+        const numA = parseInt(a.clNo.replace(/[^0-9]/g, ""), 10) || 0;
+        const numB = parseInt(b.clNo.replace(/[^0-9]/g, ""), 10) || 0;
+        return sortOrder === "asc" ? numA - numB : numB - numA;
+      });
+      return sorted;
+    } catch (error) {
+      console.error("Error sorting questions:", error);
+      return questions;
+    }
+  }, [questions, sortOrder]);
 
   const highlightMatch = useCallback((text, query) => {
     if (!query.trim()) return text;
@@ -139,7 +170,11 @@ const HeadHomepage = () => {
   const closedCount = questions.filter((q) => q.status === "closed").length;
 
   const handleQuestionClick = (clNo) => {
-    navigate(`/resquestion/${clNo}`); // Adjusted route for headquarters context
+    navigate(`/question/${clNo}`); // Updated to navigate to /question/:clNo
+  };
+
+  const handleSortClick = () => {
+    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
   };
 
   if (loading) return <div>Loading data...</div>;
@@ -148,11 +183,13 @@ const HeadHomepage = () => {
 
   const handleFilterClick = (filter) => {
     if (filter.name === "View All") {
-      navigate("/brview-all"); // Could be adjusted to a headquarters-specific route if needed
+      navigate("/brview-all");
     } else {
       setSelectedFilter(filter);
     }
   };
+
+  const sortedQuestions = getSortedQuestions();
 
   return (
     <div className="home-container">
@@ -277,8 +314,14 @@ const HeadHomepage = () => {
               <selectedFilter.component />
             ) : (
               <div className="questions-list">
-                {questions.length > 0 ? (
-                  questions.map((question, index) => (
+                <div className="sort-header">
+                  <button className="sort-button" onClick={handleSortClick}>
+                    <span>Sort {sortOrder === "asc" ? "Asc" : "Desc"}</span>
+                    <ArrowUpDown className="h-4 w-4" />
+                  </button>
+                </div>
+                {sortedQuestions.length > 0 ? (
+                  sortedQuestions.map((question, index) => (
                     <div
                       key={`${question.clNo}-${index}`}
                       className="question-cards"
@@ -293,6 +336,12 @@ const HeadHomepage = () => {
                         <div className={`status-badge ${question.status}`}>
                           {question.status}
                         </div>
+                        {question.status === "closed" &&
+                          question.Response_Date && (
+                            <div className="response-date">
+                              {question.Response_Date}
+                            </div>
+                          )}
                       </div>
                     </div>
                   ))

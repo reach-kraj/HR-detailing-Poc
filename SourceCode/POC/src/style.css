@@ -1303,7 +1303,7 @@
 /* Right Panel (Content) */
 .right-panel {
   flex: 1;
-  padding: 20px;
+  padding: 10px;
   overflow-y: auto;
   background-color: #ffffff;
 }
@@ -1444,4 +1444,43 @@
   background-color: #4CAF50;
   padding: 2px 8px;
   border-radius: 12px;
+}
+/* Add to your CSS file (e.g., filter.css or a dedicated homepage.css) */
+
+/* Response Date Styling */
+.response-date {
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  /* Matches question-date color for consistency */
+  text-align: center;
+  margin-top: 4px;
+}
+.sort-header {
+  padding: 12px 32px;
+  display: flex;
+  justify-content: flex-end;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 1px;
+  margin-top: -35px;
+}
+
+/* Sort Button Styling */
+.sort-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: #f3f4f6;
+  border: none;
+  border-radius: 6px;
+  color: #4b5563;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sort-button:hover {
+  background-color: #e5e7eb;
 }

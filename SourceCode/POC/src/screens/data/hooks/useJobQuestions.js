@@ -1,5 +1,4 @@
 
-// data/hooks/useJobQuestions.js
 import { useState, useEffect } from "react";
 import { getQuestionsDataForJob } from "../jobTemplateMapper";
 
@@ -13,15 +12,14 @@ export const useJobQuestions = () => {
       const user = JSON.parse(sessionStorage.getItem("currentUser"));
       const selectedJob = JSON.parse(sessionStorage.getItem("selectedJob"));
       const jobNo =
-        selectedJob?.jobNo || (user?.jobs && user.jobs[0]) || "J001";
+        selectedJob?.jobNo || (user?.jobs && user.jobs[0]) || "C25001"; // Default to C25001
 
       try {
         setLoading(true);
         const data = await getQuestionsDataForJob(jobNo);
-        console.log("Fetched data for job", jobNo, ":", data); // Debug log
+        console.log("Fetched data for job", jobNo, ":", data);
         const validatedData = data
           .map((item, index) => {
-            // Validate only the core required fields
             if (!item.clNo || !item.q || !item.date || !item.status) {
               console.error(
                 `Missing required fields in question at index ${index}:`,
@@ -29,9 +27,8 @@ export const useJobQuestions = () => {
               );
               return null;
             }
-            // Return the full item with trimmed required fields
             return {
-              ...item, // Preserve all original fields (e.g., HR_SK, Stage, Work_Done_By, etc.)
+              ...item,
               clNo: item.clNo.trim(),
               q: item.q.trim(),
               date: item.date.trim(),

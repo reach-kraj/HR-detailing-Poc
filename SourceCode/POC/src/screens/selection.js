@@ -1,10 +1,9 @@
 
-
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./filter/filter.css";
-import { branchData, jobData } from "./data/userdata";
-import HRlogo from "./HRlogo.png"; // Import the logo
+import { branchData } from "./data/userdata";
+import HRlogo from "./HRlogo.png";
 
 const Selection = () => {
   const navigate = useNavigate();
@@ -27,13 +26,16 @@ const Selection = () => {
     }
     setCurrentUser(user);
 
-    // Set branch info based on user or selected branch
+    // Reset jobInfo when on "Select Branch" page
+    if (!selectedBranch) {
+      setJobInfo({ jobCode: "N/A", jobName: "N/A" });
+      sessionStorage.removeItem("selectedJob"); // Clear selectedJob from sessionStorage
+    }
+
     const stateBranch = location.state?.selectedBranch;
     if (stateBranch) {
       setSelectedBranch(stateBranch);
-      setJobs(
-        stateBranch.jobs.map((jobNo) => jobData.find((j) => j.jobNo === jobNo))
-      );
+      setJobs(stateBranch.jobs);
       setBranchInfo({
         branchCode: stateBranch.branchCode,
         branchName: stateBranch.branchName,
@@ -47,6 +49,8 @@ const Selection = () => {
           branchCode: storedBranch.branchCode,
           branchName: storedBranch.branchName,
         });
+      } else {
+        setBranchInfo({ branchCode: "N/A", branchName: "N/A" });
       }
     } else {
       const userBranch = branchData.find(
@@ -55,9 +59,7 @@ const Selection = () => {
       if (userBranch) {
         setBranches([userBranch]);
         setSelectedBranch(userBranch);
-        setJobs(
-          user.jobs.map((jobNo) => jobData.find((j) => j.jobNo === jobNo))
-        );
+        setJobs(userBranch.jobs.filter((job) => user.jobs.includes(job.jobNo)));
         setBranchInfo({
           branchCode: userBranch.branchCode,
           branchName: userBranch.branchName,
@@ -65,23 +67,38 @@ const Selection = () => {
       }
     }
 
-    // Set job info if a job is already selected
+    // Only set jobInfo if a job is selected and we're on the "Select Job" page
     const storedJob = JSON.parse(sessionStorage.getItem("selectedJob"));
-    if (storedJob) {
+    if (storedJob && selectedBranch) {
       setJobInfo({
         jobCode: storedJob.jobNo,
         jobName: storedJob.jobName,
       });
+    } else {
+      setJobInfo({ jobCode: "N/A", jobName: "N/A" });
     }
-  }, [navigate, location]);
+  }, [navigate, location, selectedBranch]);
+
+  // Cleanup on component unmount or page change
+  useEffect(() => {
+    return () => {
+      // Reset jobInfo when leaving the page
+      if (!selectedBranch) {
+        setJobInfo({ jobCode: "N/A", jobName: "N/A" });
+        sessionStorage.removeItem("selectedJob");
+      }
+    };
+  }, [selectedBranch]);
 
   const handleBranchClick = (branch) => {
     setSelectedBranch(branch);
-    setJobs(branch.jobs.map((jobNo) => jobData.find((j) => j.jobNo === jobNo)));
+    setJobs(branch.jobs);
     setBranchInfo({
       branchCode: branch.branchCode,
       branchName: branch.branchName,
     });
+    // Reset jobInfo when selecting a new branch
+    setJobInfo({ jobCode: "N/A", jobName: "N/A" });
     sessionStorage.setItem(
       "selectedBranch",
       JSON.stringify({
@@ -89,16 +106,11 @@ const Selection = () => {
         branchName: branch.branchName,
       })
     );
+    sessionStorage.removeItem("selectedJob"); // Clear selectedJob when changing branch
   };
 
   const handleJobClick = (job) => {
-    sessionStorage.setItem(
-      "selectedJob",
-      JSON.stringify({
-        jobNo: job.jobNo,
-        jobName: job.jobName,
-      })
-    );
+    sessionStorage.setItem("selectedJob", JSON.stringify(job));
     setJobInfo({
       jobCode: job.jobNo,
       jobName: job.jobName,
@@ -111,9 +123,9 @@ const Selection = () => {
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem("currentUser");
-    sessionStorage.removeItem("selectedBranch");
-    sessionStorage.removeItem("selectedJob");
+    sessionStorage.clear();
+    setJobInfo({ jobCode: "N/A", jobName: "N/A" });
+    setBranchInfo({ branchCode: "N/A", branchName: "N/A" });
     navigate("/");
   };
 
@@ -122,6 +134,9 @@ const Selection = () => {
       setSelectedBranch(null);
       setJobs([]);
       setBranchInfo({ branchCode: "N/A", branchName: "N/A" });
+      setJobInfo({ jobCode: "N/A", jobName: "N/A" });
+      sessionStorage.removeItem("selectedBranch");
+      sessionStorage.removeItem("selectedJob");
     } else {
       navigate("/");
     }
@@ -216,12 +231,32 @@ const Selection = () => {
           )}
         </div>
 
+        {/* Header Row for Branch Selection */}
+        {!selectedBranch && branches.length > 0 && (
+          <div className="branch-header-row">
+            <div className="branch-header-item">Branch No</div>
+            <div className="branch-header-item">Branch Name</div>
+            <div className="branch-header-item">Status</div>
+          </div>
+        )}
+
+        {/* Header Row for Job Selection */}
+        {selectedBranch && jobs.length > 0 && (
+          <div className="job-header-row">
+            <div className="job-header-item">Project No</div>
+            <div className="job-header-item">Project Name</div>
+            <div className="job-header-item">Fabricator Job No</div>
+            <div className="job-header-item">Fabricator Name</div>
+          </div>
+        )}
+
         <div className="questions-list">
+          {/* Branch Selection Cards */}
           {currentUser.role === "SUPER_ADMIN" &&
             !selectedBranch &&
             branches.map((branch, index) => (
               <div
-                className="question-cards"
+                className="question-cards branch-card"
                 key={`${branch.branchCode}-${index}`}
                 onClick={() => handleBranchClick(branch)}
               >
@@ -235,20 +270,28 @@ const Selection = () => {
               </div>
             ))}
 
+          {/* Job Selection Cards */}
           {selectedBranch &&
             jobs.length > 0 &&
             jobs.map((job, index) => (
               <div
-                className="question-cards"
+                className="question-cards job-card"
                 key={`${job.jobNo}-${index}`}
                 onClick={() => handleJobClick(job)}
               >
                 <div className="question-date">{job.jobNo}</div>
-                <div className="question-content">
-                  <p>{job.jobName}</p>
-                </div>
-                <div className="question-meta">
-                  <div className="status-badge open">Open</div>
+                <div className="question-content-p">
+                  <p>
+                    {job.jobName}
+                    <span className="job-meta-info">
+                      <span className="job-meta-item">
+                        {job.fabricatorJobNo}
+                      </span>
+                      <span className="job-meta-item">
+                        {job.fabricatorName}
+                      </span>
+                    </span>
+                  </p>
                 </div>
               </div>
             ))}

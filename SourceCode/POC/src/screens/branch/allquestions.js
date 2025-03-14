@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { ArrowUpDown } from "lucide-react";
 import "./allquestions.css";
 import { useJobQuestions } from "../data/hooks/useJobQuestions";
-import { branchData, jobData } from "../data/userdata";
+import { branchData} from "../data/userdata";
 import HRlogo from "../HRlogo.png"; // Added logo import
 
 const AllQuestions = () => {
   const navigate = useNavigate();
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortOrder, setSortOrder] = useState("desc");
   const [searchQuery, setSearchQuery] = useState("");
   const { questions, loading, error } = useJobQuestions();
 
@@ -46,11 +46,28 @@ const AllQuestions = () => {
       }
     }
 
-    const selectedJob = sessionStorage.getItem("selectedJob")
-      ? JSON.parse(sessionStorage.getItem("selectedJob"))
-      : user.jobs && user.jobs.length > 0
-      ? jobData.find((j) => j.jobNo === user.jobs[0])
-      : null;
+  const selectedJob = JSON.parse(sessionStorage.getItem("selectedJob"));
+  if (selectedJob) {
+    const branch = branchData.find(
+      (b) => b.branchCode === selectedBranch.branchCode
+    );
+    const job = branch?.jobs.find((j) => j.jobNo === selectedJob.jobNo);
+    if (job) {
+      setJobInfo({
+        jobCode: job.jobNo,
+        jobName: job.jobName,
+      });
+    }
+  } else if (user.jobs && user.jobs.length > 0) {
+    const branch = branchData.find((b) => b.branchCode === user.branchCode);
+    const firstJob = branch?.jobs.find((j) => j.jobNo === user.jobs[0]);
+    if (firstJob) {
+      setJobInfo({
+        jobCode: firstJob.jobNo,
+        jobName: firstJob.jobName,
+      });
+    }
+  }
 
     if (selectedJob) {
       setJobInfo({

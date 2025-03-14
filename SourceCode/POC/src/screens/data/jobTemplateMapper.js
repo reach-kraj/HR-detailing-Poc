@@ -1,16 +1,17 @@
-// data/jobTemplateMapper.js
+
+
 const jobTemplateMap = {
-  J001: () => import("./template job1.js"),
-  J002: () => import("./template job2.js"),
-  J003: () => import("./template job3.js"),
-  J004: () => import("./template job4.js"),
+  "01": () => import("./template job1.js"),
+  "02": () => import("./template job2.js"),
+  "03": () => import("./template job3.js"),
+  "04": () => import("./template job4.js"),
 };
 
-// Default fallback to template.js if no job matches
 const defaultTemplate = () => import("./template.js");
 
 export const getQuestionsDataForJob = async (jobNo) => {
-  const importFn = jobTemplateMap[jobNo] || defaultTemplate;
+  const jobKey = jobNo.slice(-2); // Extract last two digits (e.g., "01" from "C25001")
+  const importFn = jobTemplateMap[jobKey] || defaultTemplate;
   try {
     const module = await importFn();
     return module.default; // Assuming each template exports `questionsData` as default

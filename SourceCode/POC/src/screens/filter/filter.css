@@ -221,4 +221,122 @@
   background-color: #6b72801d;
   border: none;
 
+}/* Add this to filter.css */
+/* Remove or comment out the previous job-row and job-item styles */
+.job-header-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 12px 32px ;
+  background-color: #f4f4f4;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+.job-header-item {
+  text-align: left;
+  padding: 8px 0;
+}
+
+/* Job Card Styling to Match question-cards */
+.job-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 120px 1fr 200px;
+  gap: 24px;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.job-card:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+/* Job Meta Info Styling */
+.job-meta-info {
+  display: flex;
+  gap: 250px;
+  margin-left: 200px;
+  color: #6b7280;
+  /* Matches question-date color */
+  font-size: 14px;
+}
+
+.job-meta-item {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ensure question-content can accommodate the layout */
+.question-content-p p {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  color: #374151;
+  font-size: 15px;
+  line-height: 1.6;
+  padding-left: 100px;
+}
+
+/* Branch Card Specificity */
+.branch-card {
+  display: grid;
+  grid-template-columns: 120px 1fr 200px;
+  gap: 24px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .job-header-row {
+    grid-template-columns: 1fr;
+    padding: 12px 20px;
+    gap: 8px;
+  }
+
+  .job-card {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .question-content p {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .job-meta-info {
+    flex-direction: column;
+    gap: 8px;
+    margin-left: 0;
+    margin-top: 8px;
+  }
+
+  .job-meta-item {
+    white-space: normal;
+  }
+}
+
+.branch-header-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 90px;
+  /* Match branch-card grid */
+  padding: 12px 32px;
+  background-color: #f4f4f4;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.branch-header-item {
+  text-align: left;
+  padding-left: 30px;
+  padding:8px;
 }
