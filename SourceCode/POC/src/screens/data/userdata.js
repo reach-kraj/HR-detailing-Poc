@@ -252,6 +252,4 @@ const branchData = [
   },
 ];
 
-// Job data is now part of branchData, so we remove the standalone jobData array.
-
 export { userData, branchData };
